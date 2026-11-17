@@ -54,7 +54,7 @@ struct MainShell: View {
             }
             .tint(DSH.Palette.accent)
 
-            if let session = liveSession {
+            if let session = liveSession, !chrome.chatOpen {
                 if expanded == session.id {
                     ChatView(sessionID: session.id)
                         .matchedGeometryEffect(id: "liveSession", in: miniNamespace)
@@ -67,13 +67,16 @@ struct MainShell: View {
                     miniBar(session)
                         .matchedGeometryEffect(id: "liveSession", in: miniNamespace)
                         .padding(.horizontal, 12)
-                        .padding(.bottom, chrome.chatOpen ? 78 : 58)
+                        .padding(.bottom, 58)
                         .zIndex(1)
                 }
             }
         }
         .animation(DSH.Motion.flow, value: expanded)
         .background(DSH.Palette.canvas.ignoresSafeArea())
+        .onChange(of: router.tab) { _, _ in
+            chrome.chatOpen = false
+        }
         .onChange(of: demo.sessions.first(where: { $0.isRunning })?.id) { _, id in
             if id == nil { expanded = nil }
         }

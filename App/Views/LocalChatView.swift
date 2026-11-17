@@ -58,6 +58,7 @@ struct LocalChatView: View {
         .background(DSH.Palette.canvas)
         .navigationTitle(session?.title ?? "本机会话")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {

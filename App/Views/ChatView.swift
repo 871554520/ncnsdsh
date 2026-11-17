@@ -53,6 +53,7 @@ struct ChatView: View {
         .background(DSH.Palette.canvas)
         .navigationTitle(session?.title ?? "会话")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
