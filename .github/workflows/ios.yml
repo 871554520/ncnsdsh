@@ -1,0 +1,67 @@
+name: Build NcnsDSH IPA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "App/**"
+      - "project.yml"
+      - ".github/workflows/ios.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build unsigned app
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project NcnsDSH.xcodeproj \
+            -scheme NcnsDSH \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            2>&1 | tee build.log
+
+      - name: Package unsigned IPA
+        run: |
+          set -euo pipefail
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/NcnsDSH.app Payload/
+          zip -qry NcnsDSH-unsigned.ipa Payload
+          shasum -a 256 NcnsDSH-unsigned.ipa | tee SHA256.txt
+          ls -lh NcnsDSH-unsigned.ipa
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: NcnsDSH-unsigned-ipa
+          path: |
+            NcnsDSH-unsigned.ipa
+            SHA256.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NcnsDSH-build-log
+          path: build.log
+          if-no-files-found: ignore
