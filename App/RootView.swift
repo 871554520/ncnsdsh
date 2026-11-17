@@ -7,6 +7,7 @@ struct RootView: View {
     @StateObject private var router = AppRouter()
     @StateObject private var account = AccountStore()
     @StateObject private var local = LocalStore()
+    @StateObject private var build = BuildStore()
 
     var body: some View {
         MainShell()
@@ -14,6 +15,7 @@ struct RootView: View {
         .environmentObject(demo)
         .environmentObject(account)
         .environmentObject(local)
+        .environmentObject(build)
         .preferredColorScheme(.dark)
         .animation(.easeInOut(duration: 0.24), value: store.current?.id)
         .onAppear {

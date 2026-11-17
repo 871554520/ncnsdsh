@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -54,6 +54,14 @@ jobs:
             NcnsDSH-unsigned-glass.ipa
             SHA256.txt
           if-no-files-found: error
+
+      - name: Attach the IPA to a release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Build ${{ github.run_number }}
+          prerelease: true
+          files: NcnsDSH-unsigned-glass.ipa
 
       - name: Upload build log on failure
         if: failure()

@@ -8,6 +8,7 @@ struct MainShell: View {
 
     enum Tab: Hashable {
         case home
+        case build
         case workspaces
         case schedule
         case settings
@@ -18,6 +19,10 @@ struct MainShell: View {
             HomeView()
                 .tabItem { Label("会话", systemImage: "play.rectangle.on.rectangle") }
                 .tag(Tab.home)
+
+            BuildView()
+                .tabItem { Label("构建", systemImage: "hammer") }
+                .tag(Tab.build)
 
             WorkspacesView()
                 .tabItem { Label("工作区", systemImage: "square.grid.2x2") }
