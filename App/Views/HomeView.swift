@@ -3,6 +3,9 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject private var demo: DemoStore
     @EnvironmentObject private var store: HostStore
+    @EnvironmentObject private var account: AccountStore
+    @EnvironmentObject private var local: LocalStore
+    @State private var showAccount = false
 
     @EnvironmentObject private var router: AppRouter
 
@@ -15,6 +18,7 @@ struct HomeView: View {
                         heroCard(hero)
                     }
                     continueShelf
+                    localShelf
                     workspaceShelf
                     recentShelf
                 }
@@ -24,8 +28,17 @@ struct HomeView: View {
             }
             .scrollIndicators(.hidden)
             .background(Theme.ink.ignoresSafeArea())
-            .navigationDestination(for: UUID.self) { id in
-                ChatView(sessionID: id)
+            .navigationDestination(for: HomeRoute.self) { route in
+                switch route {
+                case .remote(let id):
+                    ChatView(sessionID: id)
+                case .local(let id):
+                    LocalChatView(sessionID: id)
+                }
+            }
+            .sheet(isPresented: $showAccount) {
+                AccountView()
+                    .environmentObject(account)
             }
             .safeAreaInset(edge: .bottom) { dock }
         }
@@ -61,11 +74,29 @@ struct HomeView: View {
                     .ncnsPill()
                 }
 
-                Button {
-                    Haptics.tap()
-                    demo.newSession()
-                    if let id = demo.activeSessionID {
-                        router.path.append(id)
+                Menu {
+                    if account.isSignedIn {
+                        Button {
+                            let id = local.createSession(model: account.selectedModel)
+                            router.path.append(.local(id))
+                        } label: {
+                            Label("本机会话", systemImage: "cpu")
+                        }
+                    } else {
+                        Button {
+                            showAccount = true
+                        } label: {
+                            Label("登录 DeepSeek", systemImage: "person.crop.circle")
+                        }
+                    }
+
+                    Button {
+                        demo.newSession()
+                        if let id = demo.activeSessionID {
+                            router.path.append(.remote(id))
+                        }
+                    } label: {
+                        Label("演示会话", systemImage: "sparkles")
                     }
                 } label: {
                     Image(systemName: "plus")
@@ -120,7 +151,7 @@ struct HomeView: View {
                 HStack(spacing: 10) {
                     Button("继续") {
                         Haptics.soft()
-                        router.path.append(session.id)
+                        router.path.append(.remote(session.id))
                     }
                     .buttonStyle(.ncnsProminent)
 
@@ -128,7 +159,7 @@ struct HomeView: View {
                         Haptics.soft()
                         demo.newSession()
                         if let id = demo.activeSessionID {
-                            router.path.append(id)
+                            router.path.append(.remote(id))
                         }
                     }
                     .buttonStyle(.ncnsGlass)
@@ -149,7 +180,7 @@ struct HomeView: View {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 12) {
                     ForEach(demo.continueSessions) { session in
-                        NavigationLink(value: session.id) {
+                        NavigationLink(value: HomeRoute.remote(session.id)) {
                             continueCard(session)
                         }
                         .buttonStyle(CardPressStyle())
@@ -253,7 +284,7 @@ struct HomeView: View {
 
             VStack(spacing: 0) {
                 ForEach(Array(demo.sessions.dropFirst(2).prefix(4))) { session in
-                    NavigationLink(value: session.id) {
+                    NavigationLink(value: HomeRoute.remote(session.id)) {
                         HStack(spacing: 12) {
                             ArtworkView(
                                 index: session.artworkIndex,
@@ -293,6 +324,84 @@ struct HomeView: View {
         }
     }
 
+    // MARK: - Local
+
+    @ViewBuilder
+    private var localShelf: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("本机")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(.white)
+                Text("不连电脑")
+                    .font(.system(size: 11))
+                    .foregroundStyle(Theme.dim)
+                Spacer()
+                if account.isSignedIn {
+                    Button("新建") {
+                        let id = local.createSession(model: account.selectedModel)
+                        router.path.append(.local(id))
+                    }
+                    .buttonStyle(NcnsGlassButtonStyle(compact: true))
+                } else {
+                    Button("登录") { showAccount = true }
+                        .buttonStyle(NcnsGlassButtonStyle(compact: true))
+                }
+            }
+
+            if !account.isSignedIn {
+                EmptyHint(text: "登录 DeepSeek 后，就能在这台手机上直接对话，让它读写本机工作区。")
+            } else if local.recent.isEmpty {
+                EmptyHint(text: "还没有本机会话。点「新建」开始。")
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(local.recent.prefix(3)) { session in
+                        NavigationLink(value: HomeRoute.local(session.id)) {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .fill(Theme.artwork(session.title.count))
+                                    .frame(width: 46, height: 46)
+                                    .overlay(
+                                        Text(session.initial)
+                                            .font(.system(size: 17, weight: .bold, design: .rounded))
+                                            .foregroundStyle(.white.opacity(0.9))
+                                    )
+
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(session.title)
+                                        .font(.system(size: 15, weight: .medium))
+                                        .foregroundStyle(.white)
+                                        .lineLimit(1)
+                                    Text(session.preview)
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(Theme.muted)
+                                        .lineLimit(1)
+                                }
+
+                                Spacer(minLength: 8)
+
+                                Text(session.model)
+                                    .font(.system(size: 10, design: .monospaced))
+                                    .foregroundStyle(Theme.dim)
+
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(Theme.dim)
+                            }
+                            .padding(.vertical, 10)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+
+                        if session.id != local.recent.prefix(3).last?.id {
+                            Divider().overlay(Theme.hairline).padding(.leading, 58)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // MARK: - Dock
 
     @ViewBuilder
@@ -300,7 +409,7 @@ struct HomeView: View {
         if let running = demo.sessions.first(where: { $0.isRunning }) {
             Button {
                 Haptics.soft()
-                router.path.append(running.id)
+                router.path.append(.remote(running.id))
             } label: {
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)

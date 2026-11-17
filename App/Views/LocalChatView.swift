@@ -1,0 +1,188 @@
+import SwiftUI
+
+struct LocalChatView: View {
+    let sessionID: UUID
+
+    @EnvironmentObject private var local: LocalStore
+    @EnvironmentObject private var account: AccountStore
+    @Environment(\.scenePhase) private var scenePhase
+
+    @State private var draft = ""
+    @FocusState private var focused: Bool
+
+    private var session: LocalSession? { local.session(sessionID) }
+    private var messages: [LocalMessage] { session?.messages ?? [] }
+    private var isRunning: Bool { local.runningID == sessionID }
+
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 18) {
+                    if messages.isEmpty {
+                        onboarding
+                    }
+
+                    ForEach(messages) { message in
+                        LocalMessageRow(message: message)
+                            .id(message.id)
+                    }
+
+                    Color.clear.frame(height: 1).id("bottom")
+                }
+                .padding(.horizontal, 18)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
+            }
+            .scrollIndicators(.hidden)
+            .defaultScrollAnchor(.bottom)
+            .onChange(of: messages.count) { _, _ in
+                withAnimation(Motion.gentle) { proxy.scrollTo("bottom", anchor: .bottom) }
+            }
+            .onChange(of: messages.last?.text.count ?? 0) { _, _ in
+                if isRunning {
+                    proxy.scrollTo("bottom", anchor: .bottom)
+                }
+            }
+        }
+        .background(Theme.ink.ignoresSafeArea())
+        .navigationTitle(session?.title ?? "本机会话")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                if isRunning {
+                    Button("停止") {
+                        Haptics.soft()
+                        local.stop()
+                    }
+                    .font(.system(size: 13, weight: .semibold))
+                }
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            VStack(spacing: 8) {
+                if let error = local.error {
+                    Text(error)
+                        .font(.system(size: 12))
+                        .foregroundStyle(Color(hex: 0xFFB86B))
+                        .padding(.horizontal, 16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                composer
+            }
+            .background(Theme.ink.opacity(0.001))
+        }
+    }
+
+    private var onboarding: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Image(systemName: "cpu")
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(Theme.mint)
+            Text("本机模式")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+            Text("不连电脑，模型直连 DeepSeek。它能读写这个 App 的工作区（\(LocalTools.names.joined(separator: " / "))）。")
+                .font(.system(size: 13))
+                .foregroundStyle(Theme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.top, 28)
+    }
+
+    private var composer: some View {
+        HStack(alignment: .bottom, spacing: 10) {
+            TextField("说点什么…", text: $draft, axis: .vertical)
+                .lineLimit(1...5)
+                .focused($focused)
+                .textFieldStyle(.plain)
+                .foregroundStyle(.white)
+                .tint(Theme.accent)
+                .padding(.vertical, 6)
+
+            Button(action: send) {
+                Image(systemName: "arrow.up")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 34, height: 34)
+                    .background(
+                        Circle().fill(
+                            draft.trimmingCharacters(in: .whitespaces).isEmpty
+                                ? Color.white.opacity(0.12)
+                                : Theme.accent
+                        )
+                    )
+            }
+            .buttonStyle(.plain)
+            .disabled(draft.trimmingCharacters(in: .whitespaces).isEmpty || isRunning)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .ncnsGlass(cornerRadius: 26, tint: focused ? Theme.accent.opacity(0.22) : nil, interactive: true)
+        .padding(.horizontal, 14)
+        .padding(.bottom, 8)
+        .padding(.top, 4)
+    }
+
+    private func send() {
+        let text = draft
+        draft = ""
+        Haptics.soft()
+        local.send(text, in: sessionID, model: session?.model ?? account.selectedModel, key: account.key)
+    }
+}
+
+private struct LocalMessageRow: View {
+    let message: LocalMessage
+
+    var body: some View {
+        switch message.role {
+        case .user:
+            HStack {
+                Spacer(minLength: 56)
+                Text(message.text)
+                    .font(.system(size: 15))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 11)
+                    .background(Theme.accent.opacity(0.18), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .textSelection(.enabled)
+            }
+
+        case .tool:
+            HStack(spacing: 10) {
+                Image(systemName: "wrench.and.screwdriver.fill")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Theme.mint)
+                    .frame(width: 22, height: 22)
+                    .background(Theme.mint.opacity(0.14), in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(message.toolName ?? "tool")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.92))
+                    Text(message.text.replacingOccurrences(of: "\n", with: " · "))
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundStyle(Theme.muted)
+                        .lineLimit(2)
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(12)
+            .background(Theme.raised, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+        case .assistant, .system:
+            VStack(alignment: .leading, spacing: 8) {
+                if message.text.isEmpty {
+                    ShimmerLine(color: Theme.mint).frame(width: 120)
+                } else {
+                    Text(message.text)
+                        .font(.system(size: 15))
+                        .lineSpacing(5)
+                        .foregroundStyle(.white.opacity(0.94))
+                        .textSelection(.enabled)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}

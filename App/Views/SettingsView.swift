@@ -4,15 +4,20 @@ import UIKit
 struct SettingsView: View {
     @EnvironmentObject private var store: HostStore
     @EnvironmentObject private var demo: DemoStore
+    @EnvironmentObject private var account: AccountStore
+    @EnvironmentObject private var local: LocalStore
 
     @State private var showWeb = false
+    @State private var showAccount = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
+                    accountCard
                     hostCard
                     dataCard
+                    localCard
                     webCard
                     aboutCard
                 }
@@ -24,6 +29,10 @@ struct SettingsView: View {
             .background(Theme.ink.ignoresSafeArea())
             .navigationTitle("设置")
             .navigationBarTitleDisplayMode(.large)
+        }
+        .sheet(isPresented: $showAccount) {
+            AccountView()
+                .environmentObject(account)
         }
         .sheet(isPresented: $showWeb) {
             if let host = store.current {
@@ -102,6 +111,75 @@ struct SettingsView: View {
             }
 
             Text("界面和交互已经按最终形态跑通，数据还是本地的 demo。接上 `dsh-plugin-mobile-gateway` 的 WebSocket 之后，这里会显示连接状态与事件吞吐。")
+                .font(.system(size: 12))
+                .foregroundStyle(Theme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private var accountCard: some View {
+        Button {
+            Haptics.tap()
+            showAccount = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: account.isSignedIn ? "person.crop.circle.fill.badge.checkmark" : "person.crop.circle")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(account.isSignedIn ? Theme.mint : Theme.accent)
+                    .frame(width: 38, height: 38)
+                    .background((account.isSignedIn ? Theme.mint : Theme.accent).opacity(0.14), in: RoundedRectangle(cornerRadius: 11, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("DeepSeek 账号")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(.white)
+                    Text(account.isSignedIn ? "已登录 · \(account.selectedModel)" : "未登录 · 登录后可以用本机模式")
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.muted)
+                }
+
+                Spacer(minLength: 8)
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(Theme.dim)
+            }
+            .padding(16)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .background(Theme.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private var localCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Image(systemName: "internaldrive")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(Theme.mint)
+                    .frame(width: 34, height: 34)
+                    .background(Theme.mint.opacity(0.14), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("本机工作区")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(.white)
+                    Text("Documents/NcnsDSH/workspace")
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundStyle(Theme.muted)
+                }
+
+                Spacer(minLength: 8)
+
+                Text("\(local.recent.count) 个会话")
+                    .font(.system(size: 11))
+                    .foregroundStyle(Theme.dim)
+            }
+
+            Text("本机会话能读写这个目录。它不在 iCloud 里，也不会同步给宿主。")
                 .font(.system(size: 12))
                 .foregroundStyle(Theme.muted)
                 .fixedSize(horizontal: false, vertical: true)

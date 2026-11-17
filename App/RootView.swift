@@ -5,6 +5,8 @@ struct RootView: View {
     @EnvironmentObject private var store: HostStore
     @StateObject private var demo = DemoStore()
     @StateObject private var router = AppRouter()
+    @StateObject private var account = AccountStore()
+    @StateObject private var local = LocalStore()
 
     var body: some View {
         Group {
@@ -16,6 +18,8 @@ struct RootView: View {
             }
         }
         .environmentObject(demo)
+        .environmentObject(account)
+        .environmentObject(local)
         .preferredColorScheme(.dark)
         .animation(.easeInOut(duration: 0.24), value: store.current?.id)
         .onAppear {
