@@ -4,10 +4,10 @@ struct HomeView: View {
     @EnvironmentObject private var demo: DemoStore
     @EnvironmentObject private var store: HostStore
 
-    @State private var path = NavigationPath()
+    @EnvironmentObject private var router: AppRouter
 
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $router.path) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
                     topBar
@@ -65,7 +65,7 @@ struct HomeView: View {
                     Haptics.tap()
                     demo.newSession()
                     if let id = demo.activeSessionID {
-                        path.append(id)
+                        router.path.append(id)
                     }
                 } label: {
                     Image(systemName: "plus")
@@ -120,7 +120,7 @@ struct HomeView: View {
                 HStack(spacing: 10) {
                     Button("继续") {
                         Haptics.soft()
-                        path.append(session.id)
+                        router.path.append(session.id)
                     }
                     .buttonStyle(.ncnsProminent)
 
@@ -128,7 +128,7 @@ struct HomeView: View {
                         Haptics.soft()
                         demo.newSession()
                         if let id = demo.activeSessionID {
-                            path.append(id)
+                            router.path.append(id)
                         }
                     }
                     .buttonStyle(.ncnsGlass)
@@ -300,7 +300,7 @@ struct HomeView: View {
         if let running = demo.sessions.first(where: { $0.isRunning }) {
             Button {
                 Haptics.soft()
-                path.append(running.id)
+                router.path.append(running.id)
             } label: {
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)

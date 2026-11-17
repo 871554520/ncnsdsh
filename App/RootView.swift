@@ -4,6 +4,7 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject private var store: HostStore
     @StateObject private var demo = DemoStore()
+    @StateObject private var router = AppRouter()
 
     var body: some View {
         Group {
@@ -11,18 +12,30 @@ struct RootView: View {
                 ConnectView()
             } else {
                 MainShell()
+                    .environmentObject(router)
             }
         }
         .environmentObject(demo)
         .preferredColorScheme(.dark)
         .animation(.easeInOut(duration: 0.24), value: store.current?.id)
+        .onAppear {
+            // Siri / 快捷指令 / 小组件按下时，把意图交给当前窗口。
+            NcnsIntentBridge.open = { target in
+                router.handle(target, demo: demo)
+            }
+        }
         .onOpenURL { url in
-            guard let scheme = url.scheme, scheme == "ncnsdsh" || scheme == "dsh" else { return }
-            let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
-            let target = items?.first(where: { $0.name == "url" })?.value ?? ""
-            let token = items?.first(where: { $0.name == "token" })?.value ?? ""
-            if !target.isEmpty {
-                store.connect(address: target, token: token)
+            if url.host == "connect" {
+                let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
+                let target = items?.first { $0.name == "url" }?.value ?? ""
+                let token = items?.first { $0.name == "token" }?.value ?? ""
+                if !target.isEmpty {
+                    store.connect(address: target, token: token)
+                    return
+                }
+            }
+            if let target = NcnsIntentTarget.from(url) {
+                router.handle(target, demo: demo)
             }
         }
     }

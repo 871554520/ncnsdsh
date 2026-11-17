@@ -4,7 +4,7 @@ struct MainShell: View {
     @EnvironmentObject private var store: HostStore
     @EnvironmentObject private var demo: DemoStore
 
-    @State private var tab: Tab = .home
+    @EnvironmentObject private var router: AppRouter
 
     enum Tab: Hashable {
         case home
@@ -14,7 +14,7 @@ struct MainShell: View {
     }
 
     var body: some View {
-        TabView(selection: $tab) {
+        TabView(selection: $router.tab) {
             HomeView()
                 .tabItem { Label("会话", systemImage: "play.rectangle.on.rectangle") }
                 .tag(Tab.home)

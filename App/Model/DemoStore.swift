@@ -13,6 +13,7 @@ final class DemoStore: ObservableObject {
     @Published private(set) var messages: [UUID: [ChatMessage]] = [:]
     @Published var approval: ApprovalRequest?
     @Published var activeSessionID: UUID?
+    @Published var pendingDraft: String?
 
     private var streamTask: Task<Void, Never>?
 
@@ -49,7 +50,7 @@ final class DemoStore: ObservableObject {
         activeSessionID = id
     }
 
-    func newSession() {
+    func newSession(draft: String? = nil) {
         let session = ChatSession(
             id: UUID(),
             title: "新会话",
@@ -64,6 +65,7 @@ final class DemoStore: ObservableObject {
         sessions.insert(session, at: 0)
         messages[session.id] = []
         activeSessionID = session.id
+        pendingDraft = draft
     }
 
     func togglePinned(_ id: UUID) {

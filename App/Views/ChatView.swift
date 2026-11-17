@@ -57,6 +57,13 @@ struct ChatView: View {
             }
         }
         .safeAreaInset(edge: .bottom) { composer }
+        .onAppear {
+            if let incoming = demo.pendingDraft {
+                draft = incoming
+                demo.pendingDraft = nil
+                composerFocused = true
+            }
+        }
         .sheet(item: $demo.approval) { request in
             ApprovalSheet(request: request)
                 .environmentObject(demo)
