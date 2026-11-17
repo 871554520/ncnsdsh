@@ -8,6 +8,8 @@ struct RootView: View {
     @StateObject private var account = AccountStore()
     @StateObject private var local = LocalStore()
     @StateObject private var build = BuildStore()
+    @StateObject private var plugins = PluginStore()
+    @StateObject private var phone = PhoneAuth()
 
     var body: some View {
         MainShell()
@@ -16,6 +18,8 @@ struct RootView: View {
         .environmentObject(account)
         .environmentObject(local)
         .environmentObject(build)
+        .environmentObject(plugins)
+        .environmentObject(phone)
         .preferredColorScheme(.dark)
         .animation(.easeInOut(duration: 0.24), value: store.current?.id)
         .onAppear {

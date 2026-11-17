@@ -6,20 +6,25 @@ struct SettingsView: View {
     @EnvironmentObject private var demo: DemoStore
     @EnvironmentObject private var account: AccountStore
     @EnvironmentObject private var local: LocalStore
+    @EnvironmentObject private var phone: PhoneAuth
+    @EnvironmentObject private var plugins: PluginStore
 
     @State private var showWeb = false
     @State private var showAccount = false
     @State private var showConnect = false
     @State private var showCredits = false
+    @State private var showPhone = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
                     accountCard
+                    phoneCard
                     hostCard
                     dataCard
                     localCard
+                    pluginsCard
                     fileCard
                     webCard
                     aboutCard
@@ -43,6 +48,10 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showCredits) {
             CreditsView()
+        }
+        .sheet(isPresented: $showPhone) {
+            PhoneLoginView()
+                .environmentObject(phone)
         }
         .sheet(isPresented: $showWeb) {
             if let host = store.current {
@@ -198,6 +207,64 @@ struct SettingsView: View {
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private var phoneCard: some View {
+        Button {
+            Haptics.tap()
+            showPhone = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: phone.signedIn ? "iphone.gen3.badge.checkmark" : "iphone")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(phone.signedIn ? DSH.Palette.success : DSH.Palette.accent)
+                    .frame(width: 38, height: 38)
+                    .background(DSH.Palette.surface, in: RoundedRectangle(cornerRadius: 11, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("手机号")
+                        .font(DSH.TypeScale.headline)
+                        .foregroundStyle(DSH.Palette.text)
+                    Text(phone.signedIn ? phone.masked : "未登录 · 用于同步与提醒")
+                        .font(DSH.TypeScale.footnote)
+                        .foregroundStyle(DSH.Palette.secondary)
+                }
+
+                Spacer(minLength: 8)
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(DSH.Palette.tertiary)
+            }
+            .padding(16)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .background(DSH.Palette.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private var pluginsCard: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "puzzlepiece.extension")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(DSH.Palette.accent)
+                .frame(width: 34, height: 34)
+                .background(DSH.Palette.surface, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("插件")
+                    .font(DSH.TypeScale.headline)
+                    .foregroundStyle(DSH.Palette.text)
+                Text("已安装 \(plugins.installed.count) 个 · 商店里还有 \(plugins.store.count) 个")
+                    .font(DSH.TypeScale.footnote)
+                    .foregroundStyle(DSH.Palette.secondary)
+            }
+
+            Spacer()
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(DSH.Palette.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var fileCard: some View {

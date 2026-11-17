@@ -10,8 +10,8 @@ struct MainShell: View {
     enum Tab: Hashable {
         case home
         case build
+        case plugins
         case workspaces
-        case schedule
         case settings
     }
 
@@ -34,9 +34,9 @@ struct MainShell: View {
                     .tabItem { Label("工作区", systemImage: "square.grid.2x2") }
                     .tag(Tab.workspaces)
 
-                ScheduleView()
-                    .tabItem { Label("定时", systemImage: "clock") }
-                    .tag(Tab.schedule)
+                PluginsView()
+                    .tabItem { Label("插件", systemImage: "puzzlepiece.extension") }
+                    .tag(Tab.plugins)
 
                 SettingsView()
                     .tabItem { Label("设置", systemImage: "gearshape") }

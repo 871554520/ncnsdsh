@@ -7,7 +7,7 @@ enum DSH {
         static let surface = Color.white.opacity(0.06)
         static let raised = Color.white.opacity(0.10)
         static let hairline = Color.white.opacity(0.12)
-        static let accent = Color(red: 0.980, green: 0.176, blue: 0.282) // #FA2D48
+        static let accent = Color(red: 0.039, green: 0.518, blue: 1.0) // #0A84FF, Apple blue
         static let text = Color.white.opacity(0.96)
         static let secondary = Color.white.opacity(0.60)
         static let tertiary = Color.white.opacity(0.36)

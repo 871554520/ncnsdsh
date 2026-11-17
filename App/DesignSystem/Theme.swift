@@ -4,7 +4,7 @@ import UIKit
 /// NcnsDSH 的视觉基调：近黑影院底 + 靛蓝/薄荷双色强调。
 /// 旧名字（paper/card/muted/markGradient）保留，网页兜底页还在用。
 enum Theme {
-    static let accent = Color(hex: 0xFA2D48)
+    static let accent = Color(hex: 0x0A84FF)
     static let mint = Color(hex: 0x32D74B)
 
     static let ink = Color.black
