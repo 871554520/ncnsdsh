@@ -10,6 +10,7 @@ struct SettingsView: View {
     @State private var showWeb = false
     @State private var showAccount = false
     @State private var showConnect = false
+    @State private var showCredits = false
 
     var body: some View {
         NavigationStack {
@@ -38,6 +39,9 @@ struct SettingsView: View {
         .sheet(isPresented: $showConnect) {
             ConnectView()
                 .environmentObject(store)
+        }
+        .sheet(isPresented: $showCredits) {
+            CreditsView()
         }
         .sheet(isPresented: $showWeb) {
             if let host = store.current {
@@ -234,7 +238,7 @@ struct SettingsView: View {
     private var aboutCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 12) {
-                BrandMark(size: 44, showsDot: true)
+                BrandMark(size: 44)
                 BrandWordmark()
                 Spacer()
                 Text(Bundle.main.appVersion)
@@ -247,7 +251,23 @@ struct SettingsView: View {
                 .foregroundStyle(Theme.muted)
                 .fixedSize(horizontal: false, vertical: true)
 
-            BrandBadge()
+            HStack(spacing: 12) {
+                BrandBadge()
+                Spacer()
+                Button {
+                    Haptics.tap()
+                    showCredits = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("关于与制作人员")
+                            .font(.system(size: 12, weight: .medium))
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 10, weight: .bold))
+                    }
+                    .foregroundStyle(Theme.accent)
+                }
+                .buttonStyle(.plain)
+            }
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
