@@ -296,6 +296,9 @@ struct BuildView: View {
             }
             .buttonStyle(.plain)
             .padding(.top, 4)
+
+            BrandBadge()
+                .padding(.top, 10)
         }
     }
 

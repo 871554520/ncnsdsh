@@ -232,20 +232,22 @@ struct SettingsView: View {
     }
 
     private var aboutCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("NcnsDSH")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(.white)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 12) {
+                BrandMark(size: 44, showsDot: true)
+                BrandWordmark()
                 Spacer()
                 Text(Bundle.main.appVersion)
                     .font(.system(size: 12, design: .monospaced))
                     .foregroundStyle(Theme.dim)
             }
+
             Text("视觉参照 tv 与 Apple Music；玻璃只出现在 chrome 和可交互卡片上，内容区保持不透明，保证对比度。")
                 .font(.system(size: 12))
                 .foregroundStyle(Theme.muted)
                 .fixedSize(horizontal: false, vertical: true)
+
+            BrandBadge()
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -1,0 +1,77 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram id="brand-board" name="Brand &amp; Motion">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="760" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n1" value="NcnsDSH · 品牌与液态玻璃交互" style="rounded=0;whiteSpace=wrap;html=1;fontSize=24;fillColor=none;strokeColor=none;text=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="26" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" value="品牌标识 / BRAND" style="rounded=1;fontSize=15;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="480" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" style="shape=image;imageAspect=0;image=data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20512%20512'%3E%3Cdefs%3E%3ClinearGradient%20id%3D'nc'%20x1%3D'0'%20y1%3D'0'%20x2%3D'1'%20y2%3D'1'%3E%3Cstop%20offset%3D'0'%20stop-color%3D'%235B8CFF'%2F%3E%3Cstop%20offset%3D'1'%20stop-color%3D'%2357E0B8'%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D'512'%20height%3D'512'%20rx%3D'120'%20fill%3D'url(%23nc)'%2F%3E%3Cpath%20d%3D'M150%20370V142L362%20370V142'%20fill%3D'none'%20stroke%3D'%23ffffff'%20stroke-width%3D'58'%20stroke-linecap%3D'round'%20stroke-linejoin%3D'round'%2F%3E%3Ccircle%20cx%3D'392'%20cy%3D'132'%20r%3D'20'%20fill%3D'%230B0B0F'%20fill-opacity%3D'0.75'%2F%3E%3C%2Fsvg%3E;" vertex="1" parent="1">
+          <mxGeometry x="70" y="158" width="140" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="mark.svg" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=none;strokeColor=none;text=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="70" y="304" width="140" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" style="shape=image;imageAspect=0;image=data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20760%20200'%3E%3Ctext%20x%3D'0'%20y%3D'96'%20font-family%3D'Helvetica%2C%20Arial%2C%20sans-serif'%20font-size%3D'96'%20font-weight%3D'700'%20letter-spacing%3D'-2'%20fill%3D'%23111111'%3ENcnsDSH%3C%2Ftext%3E%3Ctext%20x%3D'4'%20y%3D'150'%20font-family%3D'Menlo%2C%20monospace'%20font-size%3D'26'%20letter-spacing%3D'6'%20fill%3D'%238A8A8E'%3EBY%20NEVERCRYNOW%3C%2Ftext%3E%3C%2Fsvg%3E;" vertex="1" parent="1">
+          <mxGeometry x="240" y="168" width="300" height="79" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="wordmark.svg" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=none;strokeColor=none;text=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="240" y="252" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" style="shape=image;imageAspect=0;image=data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20420%2064'%3E%3Crect%20x%3D'1'%20y%3D'1'%20width%3D'418'%20height%3D'62'%20rx%3D'31'%20fill%3D'none'%20stroke%3D'%23111111'%20stroke-opacity%3D'0.28'%2F%3E%3Ccircle%20cx%3D'34'%20cy%3D'32'%20r%3D'7'%20fill%3D'%2357E0B8'%2F%3E%3Ctext%20x%3D'58'%20y%3D'40'%20font-family%3D'Menlo%2C%20monospace'%20font-size%3D'18'%20letter-spacing%3D'3.4'%20fill%3D'%23111111'%20fill-opacity%3D'0.86'%3EMADE%20BY%20NEVERCRYNOW%3C%2Ftext%3E%3C%2Fsvg%3E;" vertex="1" parent="1">
+          <mxGeometry x="240" y="280" width="300" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" value="badge.svg · 关于页 / 构建页页脚" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=none;strokeColor=none;text=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="240" y="332" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" value="渐变固定 #5B8CFF → #57E0B8；N 的端点圆头，右下墨点在 75% 不透明度。" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=none;strokeColor=none;text=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="70" y="368" width="420" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" value="液态玻璃 / DRAG → DEFORM → SPRING" style="rounded=1;fontSize=15;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="560" y="90" width="500" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" value="静止" style="rounded=1;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="600" y="150" width="110" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n12" value="拖拽 · 横向拉伸" style="rounded=1;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="745" y="158" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n13" value="松手 · 回弹" style="rounded=1;fontSize=12;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="930" y="150" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n14" value="scaleX = 1 + |Δx| / 500（上限 1.14）
+scaleY = 1 − |Δx| / 1400（下限 0.90）
+rotation = Δx / 28（夹在 ±10°）" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=none;strokeColor=none;text=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="255" width="210" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="n15" value="回弹：interpolatingSpring
+stiffness 210 · damping 14
+初速度 = predictedEndVelocity / 600" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=none;strokeColor=none;text=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="820" y="255" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="n16" value="拖到 90pt 触发一次轻触感；松手不吸附、只回位。" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=none;strokeColor=none;text=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="372" width="440" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="n17" value="交互细节：光标/手指按下 → 玻璃高光沿拖动方向偏移；抬指 → 0.35s 内形变归零，同时高光回正。" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=none;strokeColor=none;text=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="452" width="1020" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="n18" value="适用范围：运行中胶囊、hero 卡、审批 sheet 的把手；列表行与消息气泡不参与拖拽形变。" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=none;strokeColor=none;text=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="492" width="1020" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="n19" value="Made by NevercryNow · NcnsDSH design board" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=none;strokeColor=none;text=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="700" width="420" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="drag" style="rounded=1;html=1;fontSize=11;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;endArrow=classic;drawaiRoutingMode=manual;" edge="1" parent="1" source="n11" target="n12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="release" style="rounded=1;html=1;fontSize=11;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;endArrow=classic;drawaiRoutingMode=manual;" edge="1" parent="1" source="n12" target="n13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -188,6 +188,7 @@ struct HomeView: View {
             .padding(22)
         }
         .frame(height: 320)
+        .liquidDrag(threshold: 120)
     }
 
     // MARK: - Shelves
@@ -448,6 +449,7 @@ struct HomeView: View {
             .padding(22)
         }
         .frame(height: 300)
+        .liquidDrag(threshold: 120)
     }
 
     // MARK: - Local
@@ -572,6 +574,7 @@ struct HomeView: View {
                 .padding(.bottom, 6)
             }
             .buttonStyle(.plain)
+            .liquidDrag(threshold: 110)
             .transition(.move(edge: .bottom).combined(with: .opacity))
         }
     }

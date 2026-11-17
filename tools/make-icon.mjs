@@ -31,46 +31,52 @@ function segmentDistance(px_, py, ax, ay, bx, by) {
 }
 
 const s = size / 1024;
-const chevron = [
-  [300 * s, 360 * s, 470 * s, 512 * s],
-  [470 * s, 512 * s, 300 * s, 664 * s],
+const stroke = 58 * s;
+const segments = [
+  [290 * s, 720 * s, 290 * s, 280 * s],
+  [290 * s, 280 * s, 710 * s, 720 * s],
+  [710 * s, 720 * s, 710 * s, 280 * s],
 ];
-const underscore = [520 * s, 664 * s, 720 * s, 664 * s];
-const stroke = 46 * s;
+const dot = { x: 770 * s, y: 250 * s, r: 26 * s };
 
 for (let y = 0; y < size; y += 1) {
   for (let x = 0; x < size; x += 1) {
     const t = (x / size) * 0.55 + (y / size) * 0.45;
-    let r = lerp(24, 74, t);
-    let g = lerp(30, 58, t);
-    let b = lerp(52, 152, t);
+    let r = lerp(38, 87, t);
+    let g = lerp(70, 224, t);
+    let b = lerp(255, 184, t);
 
-    // soft radial highlight in the top-left
     const dx = x / size - 0.22;
     const dy = y / size - 0.18;
     const glow = Math.max(0, 1 - Math.sqrt(dx * dx + dy * dy) / 0.55);
-    r += 30 * glow;
-    g += 34 * glow;
-    b += 60 * glow;
+    r += 26 * glow;
+    g += 22 * glow;
+    b += 18 * glow;
 
-    let alpha = 255;
-
-    // mark
     let d = Infinity;
-    for (const [ax, ay, bx, by] of chevron) d = Math.min(d, segmentDistance(x, y, ax, ay, bx, by));
-    d = Math.min(d, segmentDistance(x, y, underscore[0], underscore[1], underscore[2], underscore[3]));
+    for (const [ax, ay, bx, by] of segments) d = Math.min(d, segmentDistance(x, y, ax, ay, bx, by));
     const coverage = 1 - smooth(stroke - 1.5 * s, stroke + 1.5 * s, d);
+
     if (coverage > 0) {
       r = lerp(r, 255, coverage);
       g = lerp(g, 255, coverage);
       b = lerp(b, 255, coverage);
     }
 
+    const dd = Math.hypot(x - dot.x, y - dot.y);
+    const dotCoverage = 1 - smooth(dot.r - 1.5 * s, dot.r + 1.5 * s, dd);
+    if (dotCoverage > 0) {
+      r = lerp(r, 11, dotCoverage * 0.78);
+      g = lerp(g, 11, dotCoverage * 0.78);
+      b = lerp(b, 15, dotCoverage * 0.78);
+    }
+
     const i = (y * size + x) * 4;
-    px[i] = Math.round(r);
-    px[i + 1] = Math.round(g);
-    px[i + 2] = Math.round(b);
-    px[i + 3] = alpha;
+    const clamp = (value) => Math.max(0, Math.min(255, Math.round(value)));
+    px[i] = clamp(r);
+    px[i + 1] = clamp(g);
+    px[i + 2] = clamp(b);
+    px[i + 3] = 255;
   }
 }
 

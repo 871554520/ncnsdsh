@@ -113,6 +113,20 @@ workflow 里的 `softprops/action-gh-release` 会把 IPA 挂成一个 prerelease
 App 用 `/releases` 找到最新那条的 `.ipa` 资产直接下载（公开仓库不需要额外鉴权）。
 App 内还带一份 5 步教程（右上角问号）。
 
+## 品牌与动效
+
+- 标识在 `brand/`：`mark.svg`（渐变 N）、`wordmark.svg`、`badge.svg`（MADE BY NEVERCRYNOW）。
+- App 内同一套比例由 `App/DesignSystem/Brand.swift` 画出来：`BrandMark` / `BrandWordmark` / `BrandBadge`，
+  用在关于页、构建页页脚和连接页。
+- 设计板：`docs/design/brand-board.drawio`（drawio 可编辑）+ 导出的 `brand-board.svg`。
+
+液态玻璃的交互：
+
+- `.liquidDrag()`：横向拖动时 `scaleX` 拉伸到 1.14、`scaleY` 压到 0.90、旋转夹在 ±10°，
+  过 90pt 触发一次轻触感；松手用 `interpolatingSpring(stiffness: 210, damping: 14)` 回位，
+  初速度取 `predictedEndTranslation`。
+- 只挂在能"拿起来"的东西上：运行中胶囊、两个 hero 卡、审批把手；列表行和消息气泡不参与。
+
 ## 玻璃与系统版本
 
 `App/DesignSystem/Glass.swift` 把 Liquid Glass 收在一个地方：

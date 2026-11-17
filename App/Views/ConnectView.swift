@@ -90,15 +90,7 @@ struct ConnectView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 14) {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Theme.markGradient)
-                .frame(width: 68, height: 68)
-                .overlay(
-                    Text(">_")
-                        .font(.system(size: 27, weight: .heavy, design: .monospaced))
-                        .foregroundStyle(.white)
-                )
-                .shadow(color: Theme.accent.opacity(0.45), radius: 22, y: 10)
+            BrandMark(size: 68)
 
             Text("NcnsDSH")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
