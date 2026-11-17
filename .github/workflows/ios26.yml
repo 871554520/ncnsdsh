@@ -1,0 +1,64 @@
+name: Build NcnsDSH IPA (Xcode 26 · Liquid Glass)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+          xcode-select -p
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build unsigned app
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project NcnsDSH.xcodeproj \
+            -scheme NcnsDSH \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            2>&1 | tee build.log
+
+      - name: Package unsigned IPA
+        run: |
+          set -euo pipefail
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/NcnsDSH.app Payload/
+          zip -qry NcnsDSH-unsigned-glass.ipa Payload
+          shasum -a 256 NcnsDSH-unsigned-glass.ipa | tee SHA256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NcnsDSH-unsigned-glass
+          path: |
+            NcnsDSH-unsigned-glass.ipa
+            SHA256.txt
+          if-no-files-found: error
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NcnsDSH-glass-build-log
+          path: build.log
+          if-no-files-found: ignore
