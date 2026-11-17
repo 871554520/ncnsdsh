@@ -137,7 +137,7 @@ struct SettingsView: View {
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .ncnsGlass(cornerRadius: 22)
     }
 
     private var accountCard: some View {
@@ -171,7 +171,7 @@ struct SettingsView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .background(Theme.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .ncnsGlass(cornerRadius: 22)
     }
 
     private var localCard: some View {
@@ -206,7 +206,7 @@ struct SettingsView: View {
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .ncnsGlass(cornerRadius: 22)
     }
 
     private var phoneCard: some View {
@@ -240,7 +240,7 @@ struct SettingsView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .background(DSH.Palette.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .ncnsGlass(cornerRadius: 16)
     }
 
     private var pluginsCard: some View {
@@ -264,7 +264,7 @@ struct SettingsView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(DSH.Palette.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .ncnsGlass(cornerRadius: 16)
     }
 
     private var fileCard: some View {
@@ -309,7 +309,7 @@ struct SettingsView: View {
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .ncnsGlass(cornerRadius: 22)
     }
 
     private var webCard: some View {
@@ -343,7 +343,7 @@ struct SettingsView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .background(Theme.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .ncnsGlass(cornerRadius: 22)
         .disabled(store.current == nil)
         .opacity(store.current == nil ? 0.5 : 1)
     }
@@ -384,7 +384,7 @@ struct SettingsView: View {
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .ncnsGlass(cornerRadius: 22)
     }
 }
 

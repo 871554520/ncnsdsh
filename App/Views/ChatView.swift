@@ -6,7 +6,9 @@ struct ChatView: View {
 
     @EnvironmentObject private var demo: DemoStore
     @EnvironmentObject private var chrome: AppChrome
+    @EnvironmentObject private var account: AccountStore
     @State private var draft = ""
+    @State private var showModelPicker = false
     @FocusState private var composerFocused: Bool
 
     private var session: ChatSession? { demo.session(sessionID) }
@@ -72,6 +74,9 @@ struct ChatView: View {
             }
         }
         .onDisappear { chrome.chatOpen = false }
+        .sheet(isPresented: $showModelPicker) {
+            ModelPicker(selection: $account.selectedModel, models: account.models)
+        }
         .sheet(item: $demo.approval) { request in
             ApprovalSheet(request: request)
                 .environmentObject(demo)
@@ -84,13 +89,14 @@ struct ChatView: View {
         ComposerBar(
             text: $draft,
             placeholder: "问点什么…",
-            model: "deepseek-chat",
+            model: account.selectedModel,
             isBusy: session?.isRunning == true,
             onSend: {
                 let outgoing = draft
                 draft = ""
                 demo.send(outgoing, in: sessionID)
             },
+            onModel: { showModelPicker = true },
             focused: $composerFocused
         )
     }
@@ -243,6 +249,7 @@ struct ApprovalSheet: View {
 
     @EnvironmentObject private var demo: DemoStore
     @EnvironmentObject private var chrome: AppChrome
+    @EnvironmentObject private var account: AccountStore
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -287,8 +294,7 @@ struct ApprovalSheet: View {
         }
         .padding(22)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(Color(hex: 0x141420))
-        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .ncnsGlass(cornerRadius: 28)
         .padding(10)
         .presentationDetents([.height(320)])
         .presentationBackground(.clear)

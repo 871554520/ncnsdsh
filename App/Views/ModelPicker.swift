@@ -47,7 +47,7 @@ struct ModelPicker: View {
 
             Spacer(minLength: 0)
         }
-        .presentationDetents([.height(240)])
+        .presentationDetents([.height(240), .large])
         .presentationDragIndicator(.visible)
         .presentationBackground(.regularMaterial)
     }

@@ -54,7 +54,7 @@ struct MainShell: View {
             }
             .tint(DSH.Palette.accent)
 
-            if let session = liveSession, expanded != nil || !chrome.chatOpen {
+            if let session = liveSession {
                 if expanded == session.id {
                     ChatView(sessionID: session.id)
                         .matchedGeometryEffect(id: "liveSession", in: miniNamespace)
@@ -67,7 +67,7 @@ struct MainShell: View {
                     miniBar(session)
                         .matchedGeometryEffect(id: "liveSession", in: miniNamespace)
                         .padding(.horizontal, 12)
-                        .padding(.bottom, 58)
+                        .padding(.bottom, chrome.chatOpen ? 78 : 58)
                         .zIndex(1)
                 }
             }

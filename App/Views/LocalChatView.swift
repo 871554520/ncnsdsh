@@ -120,6 +120,7 @@ struct LocalChatView: View {
                     key: account.key
                 )
             },
+            onModel: { showModelPicker = true },
             focused: $composerFocused
         )
     }
