@@ -13,6 +13,7 @@ struct BuildView: View {
                 VStack(alignment: .leading, spacing: 18) {
                     header
                     statusCard
+                    recentCard
                     if !build.steps.isEmpty {
                         stepsCard
                     }
@@ -27,6 +28,7 @@ struct BuildView: View {
             .background(DSH.Palette.canvas)
             .navigationTitle("构建")
             .navigationBarTitleDisplayMode(.large)
+            .task { await build.loadRecent() }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -236,6 +238,12 @@ struct BuildView: View {
                 .textCase(.uppercase)
                 .tracking(1.2)
 
+            Picker("变体", selection: $build.workflow) {
+                Text("标准").tag("ios.yml")
+                Text("玻璃").tag("ios26.yml")
+            }
+            .pickerStyle(.segmented)
+
             HStack(spacing: 10) {
                 field("Owner", text: $build.owner)
                 field("Repo", text: $build.repo)
@@ -429,6 +437,71 @@ struct BuildView: View {
         }
     }
 
+    @ViewBuilder
+    private var recentCard: some View {
+        if !build.recent.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("最近构建")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Theme.muted)
+                    .textCase(.uppercase)
+                    .tracking(1.2)
+
+                ForEach(build.recent) { record in
+                    Button {
+                        Task { await build.download(record) }
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "shippingbox")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(DSH.Palette.accent)
+                                .frame(width: 28, height: 28)
+                                .background(DSH.Palette.surface, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(record.name)
+                                    .font(.system(size: 12, design: .monospaced))
+                                    .foregroundStyle(DSH.Palette.text)
+                                    .lineLimit(1)
+                                Text("\(record.tag) · \(dateText(record.date))")
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(DSH.Palette.tertiary)
+                            }
+
+                            Spacer(minLength: 6)
+
+                            Text(byteText(record.size))
+                                .font(.system(size: 10, design: .monospaced))
+                                .foregroundStyle(DSH.Palette.tertiary)
+
+                            Image(systemName: "arrow.down.circle")
+                                .font(.system(size: 14))
+                                .foregroundStyle(DSH.Palette.accent)
+                        }
+                        .padding(.vertical, 7)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(18)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(DSH.Palette.surface, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        }
+    }
+
+    private func dateText(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.dateFormat = "M月d日 HH:mm"
+        return formatter.string(from: date)
+    }
+
+    private func byteText(_ bytes: Int) -> String {
+        let mb = Double(bytes) / 1_048_576
+        return String(format: "%.1f MB", mb)
+    }
+
     private func dotColor(_ step: BuildStep) -> Color {
         if step.failed { return Color(hex: 0xFF6B6B) }
         if step.status == "completed" { return Theme.mint }
@@ -436,10 +509,6 @@ struct BuildView: View {
         return Color.white.opacity(0.2)
     }
 
-    private func byteText(_ bytes: Int) -> String {
-        let mb = Double(bytes) / 1_048_576
-        return String(format: "%.1f MB", mb)
-    }
 }
 
 #Preview {

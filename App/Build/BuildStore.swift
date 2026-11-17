@@ -14,6 +14,7 @@ final class BuildStore: ObservableObject {
     @Published private(set) var runNumber: Int?
     @Published private(set) var runURL: URL?
     @Published private(set) var artifact: BuildArtifact?
+    @Published private(set) var recent: [BuildRecord] = []
     @Published private(set) var startedAt: Date?
     @Published private(set) var runID: Int?
     @Published private(set) var elapsed: TimeInterval = 0
@@ -207,6 +208,44 @@ final class BuildStore: ObservableObject {
             try FileManager.default.moveItem(at: temp, to: destination)
 
             artifact = BuildArtifact(name: asset.name, url: destination, size: asset.size)
+            phase = .ready
+        } catch {
+            phase = .succeeded
+            message = error.localizedDescription
+        }
+    }
+
+    // MARK: - Recent builds
+
+    func loadRecent() async {
+        let api = GitHubAPI(token: token)
+        guard let releases = try? await api.releases(owner: owner, repo: repo) else { return }
+        let formatter = ISO8601DateFormatter()
+        var records: [BuildRecord] = []
+        for release in releases {
+            let date = release.created_at.flatMap { formatter.date(from: $0) } ?? Date()
+            for asset in release.assets where asset.name.hasSuffix(".ipa") {
+                guard let url = URL(string: asset.browser_download_url) else { continue }
+                records.append(
+                    BuildRecord(tag: release.tag_name, name: asset.name, url: url, size: asset.size, date: date)
+                )
+            }
+        }
+        recent = Array(records.prefix(6))
+    }
+
+    func download(_ record: BuildRecord) async {
+        phase = .downloading
+        message = nil
+        do {
+            let (temp, response) = try await URLSession.shared.download(from: record.url)
+            guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+                throw GitHubError(message: "下载被拒绝")
+            }
+            let destination = AppFiles.builds.appendingPathComponent(record.name)
+            try? FileManager.default.removeItem(at: destination)
+            try FileManager.default.moveItem(at: temp, to: destination)
+            artifact = BuildArtifact(name: record.name, url: destination, size: record.size)
             phase = .ready
         } catch {
             phase = .succeeded

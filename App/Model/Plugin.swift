@@ -112,5 +112,126 @@ extension DSHPlugin {
             official: false,
             permissions: ["网络", "后台"]
         ),
+
+        DSHPlugin(
+            id: "dsh-translator",
+            name: "Translator",
+            vendor: "community",
+            summary: "中英日互译，保留代码块与 Markdown 结构。",
+            version: "0.5.1",
+            symbol: "character.bubble",
+            category: "创作",
+            installed: false,
+            official: false,
+            permissions: ["网络"]
+        ),
+        DSHPlugin(
+            id: "dsh-image",
+            name: "Image Studio",
+            vendor: "community",
+            summary: "在会话里生成配图、图标与封面，支持比例预设。",
+            version: "0.8.0",
+            symbol: "photo.on.rectangle.angled",
+            category: "创作",
+            installed: false,
+            official: false,
+            permissions: ["网络", "文件"]
+        ),
+        DSHPlugin(
+            id: "dsh-ocr",
+            name: "OCR",
+            vendor: "DeepSeek",
+            summary: "本机识别图片里的文字，支持中英混排与表格。",
+            version: "1.0.2",
+            symbol: "text.viewfinder",
+            category: "识别",
+            installed: false,
+            official: true,
+            permissions: ["相机", "照片"]
+        ),
+        DSHPlugin(
+            id: "dsh-calendar",
+            name: "Calendar",
+            vendor: "DeepSeek",
+            summary: "读写日历：排期、提醒、把会议塞进今天。",
+            version: "0.7.3",
+            symbol: "calendar",
+            category: "本机",
+            installed: false,
+            official: true,
+            permissions: ["日历"]
+        ),
+        DSHPlugin(
+            id: "dsh-reminders",
+            name: "Reminders",
+            vendor: "DeepSeek",
+            summary: "把待办写进提醒事项，支持截止时间与清单。",
+            version: "0.7.1",
+            symbol: "checklist",
+            category: "本机",
+            installed: false,
+            official: true,
+            permissions: ["提醒事项"]
+        ),
+        DSHPlugin(
+            id: "dsh-terminal",
+            name: "Terminal",
+            vendor: "DeepSeek",
+            summary: "在会话里跑本机命令，危险操作先确认。",
+            version: "0.9.0",
+            symbol: "terminal",
+            category: "开发",
+            installed: false,
+            official: true,
+            permissions: ["文件", "子进程"]
+        ),
+        DSHPlugin(
+            id: "dsh-lsp",
+            name: "Code Index",
+            vendor: "community",
+            summary: "为工作区建符号索引，跳转、引用、补全都能问。",
+            version: "0.4.0",
+            symbol: "text.magnifyingglass",
+            category: "开发",
+            installed: false,
+            official: false,
+            permissions: ["文件"]
+        ),
+        DSHPlugin(
+            id: "dsh-pdf",
+            name: "PDF",
+            vendor: "DeepSeek",
+            summary: "解析 PDF 的文字与表格，也能导出带目录的版本。",
+            version: "1.2.0",
+            symbol: "doc.text.magnifyingglass",
+            category: "文档",
+            installed: false,
+            official: true,
+            permissions: ["文件"]
+        ),
+        DSHPlugin(
+            id: "dsh-mcp",
+            name: "MCP Connectors",
+            vendor: "DeepSeek",
+            summary: "接入 GitHub、Notion、Linear 等 MCP 服务。",
+            version: "1.0.0",
+            symbol: "point.3.connected.trianglepath.dotted",
+            category: "连接",
+            installed: false,
+            official: true,
+            permissions: ["网络", "账号"]
+        ),
+        DSHPlugin(
+            id: "dsh-liveshare",
+            name: "Live Share",
+            vendor: "community",
+            summary: "把会话共享给同事，一起看同一个工作区。",
+            version: "0.2.4",
+            symbol: "person.2.wave.2",
+            category: "协作",
+            installed: false,
+            official: false,
+            permissions: ["网络", "会话"]
+        ),
     ]
 }

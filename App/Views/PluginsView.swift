@@ -9,11 +9,35 @@ struct PluginsView: View {
     }
 
     @State private var segment: Segment = .installed
+    @State private var query = ""
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 14) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 13))
+                            .foregroundStyle(DSH.Palette.tertiary)
+                        TextField("搜索插件、厂商或分类", text: $query)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .font(DSH.TypeScale.callout)
+                            .foregroundStyle(DSH.Palette.text)
+                        if !query.isEmpty {
+                            Button {
+                                query = ""
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(DSH.Palette.tertiary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 9)
+                    .background(DSH.Palette.surface, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+
                     Picker("", selection: $segment) {
                         ForEach(Segment.allCases, id: \.self) { item in
                             Text(item.rawValue).tag(item)
@@ -22,9 +46,9 @@ struct PluginsView: View {
                     .pickerStyle(.segmented)
 
                     if segment == .installed {
-                        list(store.installed, empty: "还没有装插件。去商店看看。")
+                        list(filter(store.installed), empty: query.isEmpty ? "还没有装插件。去商店看看。" : "没有匹配的已安装插件。")
                     } else {
-                        list(store.store, empty: "商店里的都装上了。")
+                        list(filter(store.store), empty: query.isEmpty ? "商店里的都装上了。" : "没有匹配的插件。")
                     }
                 }
                 .padding(.horizontal, DSH.Inset.gutter)
@@ -35,6 +59,17 @@ struct PluginsView: View {
             .background(DSH.Palette.canvas)
             .navigationTitle("插件")
             .navigationBarTitleDisplayMode(.large)
+        }
+    }
+
+    private func filter(_ plugins: [DSHPlugin]) -> [DSHPlugin] {
+        let key = query.trimmingCharacters(in: .whitespaces)
+        guard !key.isEmpty else { return plugins }
+        return plugins.filter {
+            $0.name.localizedCaseInsensitiveContains(key)
+                || $0.summary.localizedCaseInsensitiveContains(key)
+                || $0.vendor.localizedCaseInsensitiveContains(key)
+                || $0.category.contains(key)
         }
     }
 

@@ -84,7 +84,18 @@ struct GHAsset: Decodable {
 struct GHRelease: Decodable {
     let tag_name: String
     let html_url: String
+    let created_at: String?
     let assets: [GHAsset]
+}
+
+/// 最近一次构建的产物（挂在 release 上）。
+struct BuildRecord: Identifiable, Equatable {
+    var id: String { tag + name }
+    let tag: String
+    let name: String
+    let url: URL
+    let size: Int
+    let date: Date
 }
 
 /// GitHub REST 的最小封装：校验 token、触发 workflow、查运行、查 release 资产。
