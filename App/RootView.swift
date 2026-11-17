@@ -10,6 +10,7 @@ struct RootView: View {
     @StateObject private var build = BuildStore()
     @StateObject private var plugins = PluginStore()
     @StateObject private var phone = PhoneAuth()
+    @StateObject private var chrome = AppChrome()
 
     var body: some View {
         MainShell()
@@ -20,6 +21,7 @@ struct RootView: View {
         .environmentObject(build)
         .environmentObject(plugins)
         .environmentObject(phone)
+        .environmentObject(chrome)
         .preferredColorScheme(.dark)
         .animation(.easeInOut(duration: 0.24), value: store.current?.id)
         .onAppear {

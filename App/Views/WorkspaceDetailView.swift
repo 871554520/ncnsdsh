@@ -29,7 +29,7 @@ struct WorkspaceDetailView: View {
     }
 
     private var cover: some View {
-        RemoteArtwork(seed: workspace.id.uuidString, cornerRadius: DSH.Radius.card, showsScrim: true)
+        RemoteArtwork(seed: workspace.name, github: ProjectMeta.githubSlug(for: workspace.name), cornerRadius: DSH.Radius.card, showsScrim: true)
             .frame(height: 220)
             .overlay(alignment: .bottomLeading) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -103,7 +103,7 @@ struct WorkspaceDetailView: View {
 
     private func row(_ session: ChatSession) -> some View {
         HStack(spacing: 12) {
-            RemoteArtwork(seed: session.id.uuidString, cornerRadius: DSH.Radius.small)
+            RemoteArtwork(seed: session.title, github: ProjectMeta.githubSlug(for: session.workspace), cornerRadius: DSH.Radius.small)
                 .frame(width: 56, height: 56)
 
             VStack(alignment: .leading, spacing: 2) {

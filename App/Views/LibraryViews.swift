@@ -46,8 +46,15 @@ struct WorkspacesView: View {
 
     private func card(_ workspace: Workspace) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            RemoteArtwork(seed: workspace.id.uuidString, cornerRadius: 18, showsScrim: true)
-                .frame(height: 200)
+            Color.clear
+                .aspectRatio(4.0 / 3.0, contentMode: .fit)
+                .overlay {
+                    RemoteArtwork(
+                        seed: workspace.name,
+                        github: ProjectMeta.githubSlug(for: workspace.name),
+                        cornerRadius: 18
+                    )
+                }
 
             HStack(spacing: 6) {
                 Text(workspace.name)

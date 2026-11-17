@@ -45,6 +45,12 @@ final class LocalStore: ObservableObject {
         persist()
     }
 
+    func setModel(_ model: String, for id: UUID) {
+        guard let index = sessions.firstIndex(where: { $0.id == id }) else { return }
+        sessions[index].model = model
+        persist()
+    }
+
     func rename(_ id: UUID, to title: String) {
         guard let index = sessions.firstIndex(where: { $0.id == id }) else { return }
         sessions[index].title = title

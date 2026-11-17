@@ -5,9 +5,12 @@ struct LocalChatView: View {
 
     @EnvironmentObject private var local: LocalStore
     @EnvironmentObject private var account: AccountStore
+    @EnvironmentObject private var chrome: AppChrome
     @Environment(\.scenePhase) private var scenePhase
 
     @State private var draft = ""
+    @State private var showModelPicker = false
+    @State private var pickedModel: String = ""
     @FocusState private var composerFocused: Bool
 
     private var session: LocalSession? { local.session(sessionID) }
@@ -19,7 +22,9 @@ struct LocalChatView: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 18) {
                     if messages.isEmpty {
-                        onboarding
+                        CodexIntro(model: pickedModel.isEmpty ? (session?.model ?? account.selectedModel) : pickedModel) {
+                            showModelPicker = true
+                        }
                     }
 
                     ForEach(messages) { message in
@@ -63,6 +68,11 @@ struct LocalChatView: View {
                 }
             }
         }
+        .onAppear {
+            pickedModel = session?.model ?? account.selectedModel
+            chrome.chatOpen = true
+        }
+        .onDisappear { chrome.chatOpen = false }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 8) {
                 if let error = local.error {
@@ -98,7 +108,7 @@ struct LocalChatView: View {
         ComposerBar(
             text: $draft,
             placeholder: "让本机做点什么…",
-            model: session?.model ?? account.selectedModel,
+            model: pickedModel.isEmpty ? (session?.model ?? account.selectedModel) : pickedModel,
             isBusy: isRunning,
             onSend: {
                 let outgoing = draft
@@ -106,7 +116,7 @@ struct LocalChatView: View {
                 local.send(
                     outgoing,
                     in: sessionID,
-                    model: session?.model ?? account.selectedModel,
+                    model: pickedModel.isEmpty ? (session?.model ?? account.selectedModel) : pickedModel,
                     key: account.key
                 )
             },

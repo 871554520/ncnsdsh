@@ -5,6 +5,7 @@ struct ChatView: View {
     let sessionID: UUID
 
     @EnvironmentObject private var demo: DemoStore
+    @EnvironmentObject private var chrome: AppChrome
     @State private var draft = ""
     @FocusState private var composerFocused: Bool
 
@@ -63,12 +64,14 @@ struct ChatView: View {
         }
         .safeAreaInset(edge: .bottom) { composer }
         .onAppear {
+            chrome.chatOpen = true
             if let incoming = demo.pendingDraft {
                 draft = incoming
                 demo.pendingDraft = nil
                 composerFocused = true
             }
         }
+        .onDisappear { chrome.chatOpen = false }
         .sheet(item: $demo.approval) { request in
             ApprovalSheet(request: request)
                 .environmentObject(demo)
@@ -239,6 +242,7 @@ struct ApprovalSheet: View {
     let request: ApprovalRequest
 
     @EnvironmentObject private var demo: DemoStore
+    @EnvironmentObject private var chrome: AppChrome
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {

@@ -3,6 +3,8 @@ import SwiftUI
 struct MainShell: View {
     @EnvironmentObject private var demo: DemoStore
     @EnvironmentObject private var router: AppRouter
+    @EnvironmentObject private var chrome: AppChrome
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     @State private var expanded: UUID?
     @Namespace private var miniNamespace
@@ -20,6 +22,14 @@ struct MainShell: View {
     }
 
     var body: some View {
+        if sizeClass == .regular {
+            PadShell()
+        } else {
+            phoneShell
+        }
+    }
+
+    private var phoneShell: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $router.tab) {
                 HomeView()
@@ -44,7 +54,7 @@ struct MainShell: View {
             }
             .tint(DSH.Palette.accent)
 
-            if let session = liveSession {
+            if let session = liveSession, expanded != nil || !chrome.chatOpen {
                 if expanded == session.id {
                     ChatView(sessionID: session.id)
                         .matchedGeometryEffect(id: "liveSession", in: miniNamespace)
@@ -79,7 +89,7 @@ struct MainShell: View {
             }
         } label: {
             HStack(spacing: 10) {
-                RemoteArtwork(seed: session.id.uuidString, cornerRadius: 6)
+                RemoteArtwork(seed: session.title, github: ProjectMeta.githubSlug(for: session.workspace), cornerRadius: 6)
                     .frame(width: 32, height: 32)
 
                 VStack(alignment: .leading, spacing: 0) {
