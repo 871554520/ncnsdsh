@@ -100,6 +100,19 @@ NcnsDSH/
 └── docs/                    # 调研、安装、OpenWorld 集成、重构提示词
 ```
 
+## 在 App 里出包
+
+「构建」Tab 把 GitHub Actions 搬进了 App：
+
+1. 设置里填一个细粒度 Token（Actions: Read and write、Contents: Read）；
+2. 填 owner / repo / workflow，点「开始构建」；
+3. 实时看每一步（装 XcodeGen → 生成工程 → 编译 → 打包 → 上传 → 挂 Release）；
+4. 成功后「下载 IPA」，文件落在 `Documents/NcnsDSH/builds`，可以直接分享出去。
+
+workflow 里的 `softprops/action-gh-release` 会把 IPA 挂成一个 prerelease，
+App 用 `/releases` 找到最新那条的 `.ipa` 资产直接下载（公开仓库不需要额外鉴权）。
+App 内还带一份 5 步教程（右上角问号）。
+
 ## 玻璃与系统版本
 
 `App/DesignSystem/Glass.swift` 把 Liquid Glass 收在一个地方：
