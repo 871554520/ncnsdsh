@@ -15,6 +15,7 @@ final class BuildStore: ObservableObject {
     @Published private(set) var runURL: URL?
     @Published private(set) var artifact: BuildArtifact?
     @Published private(set) var startedAt: Date?
+    @Published private(set) var runID: Int?
     @Published private(set) var elapsed: TimeInterval = 0
     @Published var token: String = ""
     @Published var message: String?
@@ -130,6 +131,7 @@ final class BuildStore: ObservableObject {
             }
 
             runNumber = run.run_number
+            runID = run.id
             runURL = URL(string: run.html_url)
             phase = .running
 
@@ -175,6 +177,12 @@ final class BuildStore: ObservableObject {
         do {
             var asset: GHAsset?
             for _ in 0..<6 {
+                if let id = runID,
+                   let release = try? await api.release(owner: owner, repo: repo, tag: "build-\(id)"),
+                   let hit = release.assets.first(where: { $0.name.hasSuffix(".ipa") }) {
+                    asset = hit
+                    break
+                }
                 let releases = try await api.releases(owner: owner, repo: repo)
                 if let hit = releases.compactMap({ release in
                     release.assets.first { $0.name.hasSuffix(".ipa") }

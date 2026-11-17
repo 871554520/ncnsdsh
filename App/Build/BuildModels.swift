@@ -166,6 +166,11 @@ struct GitHubAPI {
         return jobs.jobs
     }
 
+    func release(owner: String, repo: String, tag: String) async throws -> GHRelease {
+        let release: GHRelease = try await send("/repos/\(owner)/\(repo)/releases/tags/\(tag)")
+        return release
+    }
+
     func releases(owner: String, repo: String) async throws -> [GHRelease] {
         let list: [GHRelease] = try await send("/repos/\(owner)/\(repo)/releases?per_page=3")
         return list
