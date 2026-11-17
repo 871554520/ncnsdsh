@@ -8,7 +8,7 @@ struct LocalChatView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     @State private var draft = ""
-    @FocusState private var focused: Bool
+    @FocusState private var composerFocused: Bool
 
     private var session: LocalSession? { local.session(sessionID) }
     private var messages: [LocalMessage] { session?.messages ?? [] }
@@ -95,44 +95,23 @@ struct LocalChatView: View {
     }
 
     private var composer: some View {
-        HStack(alignment: .bottom, spacing: 10) {
-            TextField("说点什么…", text: $draft, axis: .vertical)
-                .lineLimit(1...5)
-                .focused($focused)
-                .textFieldStyle(.plain)
-                .foregroundStyle(.white)
-                .tint(Theme.accent)
-                .padding(.vertical, 6)
-
-            Button(action: send) {
-                Image(systemName: "arrow.up")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 34, height: 34)
-                    .background(
-                        Circle().fill(
-                            draft.trimmingCharacters(in: .whitespaces).isEmpty
-                                ? Color.white.opacity(0.12)
-                                : Theme.accent
-                        )
-                    )
-            }
-            .buttonStyle(.plain)
-            .disabled(draft.trimmingCharacters(in: .whitespaces).isEmpty || isRunning)
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(
-            .regularMaterial,
-            in: RoundedRectangle(cornerRadius: DSH.Radius.card, style: .continuous)
+        ComposerBar(
+            text: $draft,
+            placeholder: "让本机做点什么…",
+            model: session?.model ?? account.selectedModel,
+            isBusy: isRunning,
+            onSend: {
+                let outgoing = draft
+                draft = ""
+                local.send(
+                    outgoing,
+                    in: sessionID,
+                    model: session?.model ?? account.selectedModel,
+                    key: account.key
+                )
+            },
+            focused: $composerFocused
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: DSH.Radius.card, style: .continuous)
-                .strokeBorder(DSH.Palette.hairline, lineWidth: 0.5)
-        )
-        .padding(.horizontal, 14)
-        .padding(.bottom, 8)
-        .padding(.top, 4)
     }
 
     private func send() {

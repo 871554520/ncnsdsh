@@ -78,55 +78,18 @@ struct ChatView: View {
     // MARK: - Composer
 
     private var composer: some View {
-        HStack(alignment: .bottom, spacing: 10) {
-            Button {
-                Haptics.tap()
-            } label: {
-                Image(systemName: "paperclip")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.75))
-                    .frame(width: 34, height: 34)
-            }
-            .buttonStyle(.plain)
-
-            TextField("说点什么…", text: $draft, axis: .vertical)
-                .lineLimit(1...5)
-                .focused($composerFocused)
-                .textFieldStyle(.plain)
-                .foregroundStyle(.white)
-                .tint(Theme.accent)
-                .padding(.vertical, 6)
-
-            Button(action: send) {
-                Image(systemName: "arrow.up")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 34, height: 34)
-                    .background(
-                        Circle().fill(
-                            draft.trimmingCharacters(in: .whitespaces).isEmpty
-                                ? Color.white.opacity(0.12)
-                                : Theme.accent
-                        )
-                    )
-            }
-            .buttonStyle(.plain)
-            .disabled(draft.trimmingCharacters(in: .whitespaces).isEmpty)
-            .animation(Motion.snappy, value: draft.isEmpty)
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(
-            .regularMaterial,
-            in: RoundedRectangle(cornerRadius: DSH.Radius.card, style: .continuous)
+        ComposerBar(
+            text: $draft,
+            placeholder: "问点什么…",
+            model: "deepseek-chat",
+            isBusy: session?.isRunning == true,
+            onSend: {
+                let outgoing = draft
+                draft = ""
+                demo.send(outgoing, in: sessionID)
+            },
+            focused: $composerFocused
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: DSH.Radius.card, style: .continuous)
-                .strokeBorder(DSH.Palette.hairline, lineWidth: 0.5)
-        )
-        .padding(.horizontal, 14)
-        .padding(.bottom, 8)
-        .padding(.top, 4)
     }
 
     private func send() {
