@@ -1,5 +1,8 @@
 # NcnsDSH
 
+制作：**郑壹鸣**（设计与开发）· Made by NevercryNow
+
+
 DeepSeek Harness 的 iOS 原生客户端。视觉参照 tv 的暗色影院首页与 Apple Music 的
 artwork 驱动详情页，材质用 iOS 26 Liquid Glass；会话、工具卡、审批全部原生。
 
