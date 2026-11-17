@@ -12,7 +12,6 @@ struct WebScreen: View {
     @State private var canGoBack = false
     @State private var canGoForward = false
     @State private var pageTitle = ""
-    @State private var showSettings = false
 
     var body: some View {
         NavigationStack {
@@ -56,10 +55,6 @@ struct WebScreen: View {
                 if phase == .active, error != nil {
                     bridge.reload()
                 }
-            }
-            .sheet(isPresented: $showSettings) {
-                SettingsView(host: host)
-                    .environmentObject(store)
             }
         }
     }
@@ -106,12 +101,6 @@ struct WebScreen: View {
                 }
 
                 Divider()
-
-                Button {
-                    showSettings = true
-                } label: {
-                    Label("设置", systemImage: "gearshape")
-                }
 
                 Button(role: .destructive) {
                     store.disconnect()
