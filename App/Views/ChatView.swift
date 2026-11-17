@@ -23,7 +23,12 @@ struct ChatView: View {
                     ForEach(messages) { message in
                         MessageRow(message: message)
                             .id(message.id)
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .bottom).combined(with: .opacity),
+                                removal: .opacity
+                            ))
                     }
+                    .animation(Motion.panel, value: messages.count)
 
                     Color.clear
                         .frame(height: 1)
@@ -41,7 +46,7 @@ struct ChatView: View {
                 }
             }
         }
-        .background(Theme.ink.ignoresSafeArea())
+        .background(AmbientBackdrop(intensity: 0.5))
         .navigationTitle(session?.title ?? "会话")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

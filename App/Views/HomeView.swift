@@ -26,14 +26,14 @@ struct HomeView: View {
                         }
 
                         if store.current != nil {
-                            continueShelf
+                            continueShelf.riseIn(delay: 0.04)
                         }
 
-                        localShelf
+                        localShelf.riseIn(delay: 0.10)
 
                         if store.current != nil {
-                            workspaceShelf
-                            recentShelf
+                            workspaceShelf.riseIn(delay: 0.16)
+                            recentShelf.riseIn(delay: 0.22)
                         }
                     }
                 }
@@ -42,7 +42,7 @@ struct HomeView: View {
                 .padding(.bottom, 32)
             }
             .scrollIndicators(.hidden)
-            .background(Theme.ink.ignoresSafeArea())
+            .background(AmbientBackdrop(intensity: 0.9))
             .navigationDestination(for: HomeRoute.self) { route in
                 switch route {
                 case .remote(let id):
@@ -136,6 +136,9 @@ struct HomeView: View {
             ArtworkView(index: session.artworkIndex, initial: session.initial, cornerRadius: 26)
                 .frame(height: 320)
 
+            SpecularSweep(opacity: 0.14)
+                .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+
             LinearGradient(
                 colors: [Color.clear, Color.black.opacity(0.10), Color.black.opacity(0.82)],
                 startPoint: .top,
@@ -188,6 +191,11 @@ struct HomeView: View {
             .padding(22)
         }
         .frame(height: 320)
+        .scrollTransition(.interactive, axis: .vertical) { content, phase in
+            content
+                .scaleEffect(phase.isIdentity ? 1 : 0.94)
+                .opacity(phase.isIdentity ? 1 : 0.78)
+        }
         .liquidDrag(threshold: 120)
     }
 
@@ -404,6 +412,9 @@ struct HomeView: View {
             ArtworkView(index: session.title.count, initial: session.initial, cornerRadius: 26)
                 .frame(height: 300)
 
+            SpecularSweep(opacity: 0.12)
+                .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+
             LinearGradient(
                 colors: [Color.clear, Color.black.opacity(0.80)],
                 startPoint: .center,
@@ -449,6 +460,11 @@ struct HomeView: View {
             .padding(22)
         }
         .frame(height: 300)
+        .scrollTransition(.interactive, axis: .vertical) { content, phase in
+            content
+                .scaleEffect(phase.isIdentity ? 1 : 0.95)
+                .opacity(phase.isIdentity ? 1 : 0.8)
+        }
         .liquidDrag(threshold: 120)
     }
 
