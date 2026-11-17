@@ -130,6 +130,20 @@ App 内还带一份 5 步教程（右上角问号）。
   初速度取 `predictedEndTranslation`。
 - 只挂在能"拿起来"的东西上：运行中胶囊、两个 hero 卡、审批把手；列表行和消息气泡不参与。
 
+## 文件放在哪
+
+打开 `UIFileSharingEnabled` 之后，App 的 Documents 会出现在「文件」App 的
+**我的 iPhone → NcnsDSH**：
+
+```
+NcnsDSH/
+├── workspace/    本机会话读写的工作区（list_files / read_file / write_file）
+└── builds/       构建 Tab 下载的 IPA
+```
+
+设置页有「文件」卡：一键跳到「文件」App，或复制真实路径。
+本机会话的提示词里也写明了这个位置，智能体写完文件你可以直接去「文件」里拿走。
+
 ## 玻璃与系统版本
 
 `App/DesignSystem/Glass.swift` 把 Liquid Glass 收在一个地方：

@@ -201,9 +201,7 @@ final class BuildStore: ObservableObject {
                 throw GitHubError(message: "下载被拒绝，仓库是不是私有的？")
             }
 
-            let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-                .appendingPathComponent("NcnsDSH/builds", isDirectory: true)
-            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            let folder = AppFiles.builds
             let destination = folder.appendingPathComponent(asset.name)
             try? FileManager.default.removeItem(at: destination)
             try FileManager.default.moveItem(at: temp, to: destination)

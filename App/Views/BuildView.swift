@@ -138,6 +138,15 @@ struct BuildView: View {
                         Text(byteText(artifact.size))
                             .font(.system(size: 11, design: .monospaced))
                             .foregroundStyle(Theme.dim)
+
+                        Button {
+                            AppFiles.reveal()
+                        } label: {
+                            Label("在文件中查看", systemImage: "folder")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(Theme.accent)
+                        }
+                        .buttonStyle(.plain)
                     } else {
                         Button {
                             Task { await build.download() }

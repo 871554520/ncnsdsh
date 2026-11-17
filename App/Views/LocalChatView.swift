@@ -86,7 +86,7 @@ struct LocalChatView: View {
             Text("本机模式")
                 .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
-            Text("不连电脑，模型直连 DeepSeek。它能读写这个 App 的工作区（\(LocalTools.names.joined(separator: " / "))）。")
+            Text("不连电脑，模型直连 DeepSeek。它能读写这个 App 的工作区（\(LocalTools.names.joined(separator: " / "))），文件放在「文件」App 的「我的 iPhone → NcnsDSH → workspace」里。")
                 .font(.system(size: 13))
                 .foregroundStyle(Theme.muted)
                 .fixedSize(horizontal: false, vertical: true)

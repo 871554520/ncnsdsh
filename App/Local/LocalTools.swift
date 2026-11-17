@@ -2,13 +2,7 @@ import Foundation
 
 /// 本机模式能动的只有这个沙盒工作区：`Documents/NcnsDSH/workspace`。
 enum LocalTools {
-    static var workspace: URL {
-        let base = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-            ?? FileManager.default.temporaryDirectory
-        let url = base.appendingPathComponent("NcnsDSH/workspace", isDirectory: true)
-        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-        return url
-    }
+    static var workspace: URL { AppFiles.workspace }
 
     static let names = ["list_files", "read_file", "write_file"]
 

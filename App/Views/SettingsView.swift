@@ -20,6 +20,7 @@ struct SettingsView: View {
                     hostCard
                     dataCard
                     localCard
+                    fileCard
                     webCard
                     aboutCard
                 }
@@ -193,6 +194,51 @@ struct SettingsView: View {
                 .font(.system(size: 12))
                 .foregroundStyle(Theme.muted)
                 .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private var fileCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 10) {
+                Image(systemName: "folder")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(Theme.accent)
+                    .frame(width: 34, height: 34)
+                    .background(Theme.accent.opacity(0.14), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("文件")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(.white)
+                    Text(AppFiles.displayPath)
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundStyle(Theme.muted)
+                }
+
+                Spacer()
+            }
+
+            Text("本机会话读写的 workspace、构建下载的 IPA 都在这里。在「文件」App 的「我的 iPhone → NcnsDSH」里能直接看到、拷出来。")
+                .font(.system(size: 12))
+                .foregroundStyle(Theme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 10) {
+                Button("在「文件」中打开") {
+                    Haptics.tap()
+                    AppFiles.reveal()
+                }
+                .buttonStyle(NcnsGlassButtonStyle(compact: true))
+
+                Button("复制路径") {
+                    AppFiles.copyPath()
+                    Haptics.success()
+                }
+                .buttonStyle(NcnsGlassButtonStyle(compact: true))
+            }
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
