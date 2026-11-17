@@ -9,6 +9,7 @@ struct ChatView: View {
     @EnvironmentObject private var account: AccountStore
     @State private var draft = ""
     @State private var showModelPicker = false
+    @State private var showWorkbench = false
     @FocusState private var composerFocused: Bool
 
     private var session: ChatSession? { demo.session(sessionID) }
@@ -53,6 +54,14 @@ struct ChatView: View {
         .navigationTitle(session?.title ?? "会话")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    Haptics.tap()
+                    showWorkbench = true
+                } label: {
+                    Image(systemName: "rectangle.3.group")
+                }
+            }
             ToolbarItem(placement: .principal) {
                 HStack(spacing: 6) {
                     Text(session?.title ?? "会话")
@@ -74,6 +83,9 @@ struct ChatView: View {
             }
         }
         .onDisappear { chrome.chatOpen = false }
+        .sheet(isPresented: $showWorkbench) {
+            WorkbenchView(sessionID: sessionID)
+        }
         .sheet(isPresented: $showModelPicker) {
             ModelPicker(selection: $account.selectedModel, models: account.models)
         }

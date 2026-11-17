@@ -45,6 +45,15 @@ final class LocalStore: ObservableObject {
         persist()
     }
 
+    func compress(_ id: UUID, keep: Int = 12) {
+        guard let index = sessions.firstIndex(where: { $0.id == id }) else { return }
+        let messages = sessions[index].messages
+        guard messages.count > keep else { return }
+        sessions[index].messages = Array(messages.suffix(keep))
+        sessions[index].updatedAt = Date()
+        persist()
+    }
+
     func setModel(_ model: String, for id: UUID) {
         guard let index = sessions.firstIndex(where: { $0.id == id }) else { return }
         sessions[index].model = model

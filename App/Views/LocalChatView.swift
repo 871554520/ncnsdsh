@@ -10,6 +10,7 @@ struct LocalChatView: View {
 
     @State private var draft = ""
     @State private var showModelPicker = false
+    @State private var showWorkbench = false
     @State private var pickedModel: String = ""
     @FocusState private var composerFocused: Bool
 
@@ -59,6 +60,14 @@ struct LocalChatView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    Haptics.tap()
+                    showWorkbench = true
+                } label: {
+                    Image(systemName: "rectangle.3.group")
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 if isRunning {
                     Button("停止") {
                         Haptics.soft()
@@ -73,6 +82,15 @@ struct LocalChatView: View {
             chrome.chatOpen = true
         }
         .onDisappear { chrome.chatOpen = false }
+        .sheet(isPresented: $showWorkbench) {
+            WorkbenchView(sessionID: sessionID)
+        }
+        .sheet(isPresented: $showModelPicker) {
+            ModelPicker(selection: $pickedModel, models: account.models)
+        }
+        .onChange(of: pickedModel) { _, model in
+            local.setModel(model, for: sessionID)
+        }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 8) {
                 if let error = local.error {
