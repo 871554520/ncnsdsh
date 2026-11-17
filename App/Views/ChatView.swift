@@ -46,7 +46,7 @@ struct ChatView: View {
                 }
             }
         }
-        .background(AmbientBackdrop(intensity: 0.5))
+        .background(DSH.Palette.canvas)
         .navigationTitle(session?.title ?? "会话")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -116,10 +116,13 @@ struct ChatView: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .ncnsGlass(
-            cornerRadius: 26,
-            tint: composerFocused ? Theme.accent.opacity(0.22) : nil,
-            interactive: true
+        .background(
+            .regularMaterial,
+            in: RoundedRectangle(cornerRadius: DSH.Radius.card, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: DSH.Radius.card, style: .continuous)
+                .strokeBorder(DSH.Palette.hairline, lineWidth: 0.5)
         )
         .padding(.horizontal, 14)
         .padding(.bottom, 8)
@@ -144,14 +147,9 @@ private struct MessageRow: View {
             HStack {
                 Spacer(minLength: 56)
                 Text(message.text)
-                    .font(.system(size: 15))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 11)
-                    .background(
-                        Theme.accent.opacity(0.18),
-                        in: RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    )
+                    .font(DSH.TypeScale.body)
+                    .foregroundStyle(DSH.Palette.text)
+                    .multilineTextAlignment(.trailing)
                     .textSelection(.enabled)
             }
         } else {
@@ -161,7 +159,7 @@ private struct MessageRow: View {
                         .frame(width: 120)
                 } else {
                     Text(message.text)
-                        .font(.system(size: 15))
+                        .font(DSH.TypeScale.body)
                         .lineSpacing(5)
                         .foregroundStyle(.white.opacity(0.94))
                         .textSelection(.enabled)
@@ -238,11 +236,11 @@ private struct ToolRow: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .background(Theme.raised, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .background(DSH.Palette.surface, in: RoundedRectangle(cornerRadius: DSH.Radius.card, style: .continuous))
         .overlay(alignment: .top) {
             if tool.status == .running {
                 ShimmerLine()
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: DSH.Radius.card, style: .continuous))
             }
         }
     }

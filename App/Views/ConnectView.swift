@@ -18,7 +18,7 @@ struct ConnectView: View {
 
     var body: some View {
         ZStack {
-            backdrop
+            DSH.Palette.canvas.ignoresSafeArea()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
@@ -45,45 +45,6 @@ struct ConnectView: View {
             )
             .ignoresSafeArea()
         }
-    }
-
-    // MARK: - Backdrop
-
-    private var backdrop: some View {
-        ZStack {
-            Theme.ink
-
-            if reduceMotion {
-                RadialGradient(
-                    colors: [Theme.accent.opacity(0.34), Color.clear],
-                    center: .top,
-                    startRadius: 0,
-                    endRadius: 420
-                )
-            } else {
-                TimelineView(.animation) { context in
-                    let time = context.date.timeIntervalSinceReferenceDate
-                    let x = 0.5 + 0.12 * sin(time / 9)
-                    let y = 0.24 + 0.06 * cos(time / 11)
-
-                    ZStack {
-                        RadialGradient(
-                            colors: [Theme.accent.opacity(0.40), Color.clear],
-                            center: UnitPoint(x: x, y: y),
-                            startRadius: 0,
-                            endRadius: 430
-                        )
-                        RadialGradient(
-                            colors: [Theme.mint.opacity(0.20), Color.clear],
-                            center: UnitPoint(x: 1 - x, y: 0.82),
-                            startRadius: 0,
-                            endRadius: 380
-                        )
-                    }
-                }
-            }
-        }
-        .ignoresSafeArea()
     }
 
     // MARK: - Sections

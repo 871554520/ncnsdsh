@@ -49,7 +49,7 @@ struct LocalChatView: View {
                 }
             }
         }
-        .background(AmbientBackdrop(intensity: 0.5))
+        .background(DSH.Palette.canvas)
         .navigationTitle(session?.title ?? "本机会话")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -122,7 +122,14 @@ struct LocalChatView: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .ncnsGlass(cornerRadius: 26, tint: focused ? Theme.accent.opacity(0.22) : nil, interactive: true)
+        .background(
+            .regularMaterial,
+            in: RoundedRectangle(cornerRadius: DSH.Radius.card, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: DSH.Radius.card, style: .continuous)
+                .strokeBorder(DSH.Palette.hairline, lineWidth: 0.5)
+        )
         .padding(.horizontal, 14)
         .padding(.bottom, 8)
         .padding(.top, 4)
@@ -145,11 +152,9 @@ private struct LocalMessageRow: View {
             HStack {
                 Spacer(minLength: 56)
                 Text(message.text)
-                    .font(.system(size: 15))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 11)
-                    .background(Theme.accent.opacity(0.18), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .font(DSH.TypeScale.body)
+                    .foregroundStyle(DSH.Palette.text)
+                    .multilineTextAlignment(.trailing)
                     .textSelection(.enabled)
             }
 
@@ -173,7 +178,7 @@ private struct LocalMessageRow: View {
                 Spacer(minLength: 0)
             }
             .padding(12)
-            .background(Theme.raised, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .background(DSH.Palette.surface, in: RoundedRectangle(cornerRadius: DSH.Radius.card, style: .continuous))
 
         case .assistant, .system:
             VStack(alignment: .leading, spacing: 8) {
@@ -181,7 +186,7 @@ private struct LocalMessageRow: View {
                     ShimmerLine(color: Theme.mint).frame(width: 120)
                 } else {
                     Text(message.text)
-                        .font(.system(size: 15))
+                        .font(DSH.TypeScale.body)
                         .lineSpacing(5)
                         .foregroundStyle(.white.opacity(0.94))
                         .textSelection(.enabled)

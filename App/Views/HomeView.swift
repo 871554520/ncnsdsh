@@ -7,6 +7,7 @@ struct HomeView: View {
     @EnvironmentObject private var local: LocalStore
     @State private var showAccount = false
     @State private var showConnect = false
+    @State private var collapsed = false
 
     @EnvironmentObject private var router: AppRouter
 
@@ -14,6 +15,14 @@ struct HomeView: View {
         NavigationStack(path: $router.path) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
+                    GeometryReader { proxy in
+                        Color.clear.preference(
+                            key: ScrollOffsetKey.self,
+                            value: proxy.frame(in: .named("homeScroll")).minY
+                        )
+                    }
+                    .frame(height: 0)
+
                     topBar
 
                     if store.current == nil && local.recent.isEmpty {
@@ -42,7 +51,14 @@ struct HomeView: View {
                 .padding(.bottom, 32)
             }
             .scrollIndicators(.hidden)
-            .background(AmbientBackdrop(intensity: 0.9))
+            .coordinateSpace(name: "homeScroll")
+            .onPreferenceChange(ScrollOffsetKey.self) { offset in
+                let next = offset < -48
+                if next != collapsed {
+                    withAnimation(DSH.Motion.snap) { collapsed = next }
+                }
+            }
+            .background(DSH.Palette.canvas)
             .navigationDestination(for: HomeRoute.self) { route in
                 switch route {
                 case .remote(let id):
@@ -59,7 +75,6 @@ struct HomeView: View {
                 ConnectView()
                     .environmentObject(store)
             }
-            .safeAreaInset(edge: .bottom) { dock }
         }
     }
 
@@ -68,15 +83,19 @@ struct HomeView: View {
     private var topBar: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("NcnsDSH")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Theme.muted)
-                    .textCase(.uppercase)
-                    .tracking(1.4)
+                if !collapsed {
+                    Text("NcnsDSH")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(DSH.Palette.tertiary)
+                        .textCase(.uppercase)
+                        .tracking(1.4)
+                        .transition(.opacity)
+                }
                 Text("会话")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                    .font(collapsed ? DSH.TypeScale.title : DSH.TypeScale.display)
+                    .foregroundStyle(DSH.Palette.text)
             }
+            .animation(DSH.Motion.snap, value: collapsed)
 
             Spacer()
 
@@ -135,9 +154,6 @@ struct HomeView: View {
         ZStack(alignment: .bottomLeading) {
             RemoteArtwork(seed: session.id.uuidString, cornerRadius: 26)
                 .frame(height: 320)
-
-            SpecularSweep(opacity: 0.14)
-                .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
 
             LinearGradient(
                 colors: [Color.clear, Color.black.opacity(0.10), Color.black.opacity(0.82)],
@@ -403,9 +419,6 @@ struct HomeView: View {
             ArtworkView(index: session.title.count, initial: session.initial, cornerRadius: 26)
                 .frame(height: 300)
 
-            SpecularSweep(opacity: 0.12)
-                .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
-
             LinearGradient(
                 colors: [Color.clear, Color.black.opacity(0.80)],
                 startPoint: .center,
@@ -537,53 +550,12 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Dock
+}
 
-    @ViewBuilder
-    private var dock: some View {
-        if store.current != nil, let running = demo.sessions.first(where: { $0.isRunning }) {
-            Button {
-                Haptics.soft()
-                router.path.append(.remote(running.id))
-            } label: {
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(Theme.artwork(running.artworkIndex))
-                        .frame(width: 30, height: 30)
-                        .overlay(
-                            Text(running.initial)
-                                .font(.system(size: 13, weight: .bold, design: .rounded))
-                                .foregroundStyle(.white.opacity(0.9))
-                        )
-
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text(running.title)
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(.white)
-                            .lineLimit(1)
-                        Text("正在工作 · \(Int(running.progress * 100))%")
-                            .font(.system(size: 11))
-                            .foregroundStyle(Theme.muted)
-                    }
-
-                    Spacer(minLength: 8)
-
-                    StatusDot()
-
-                    Image(systemName: "chevron.up")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundStyle(Theme.dim)
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .ncnsPill()
-                .padding(.horizontal, 16)
-                .padding(.bottom, 6)
-            }
-            .buttonStyle(.plain)
-            .liquidDrag(threshold: 110)
-            .transition(.move(edge: .bottom).combined(with: .opacity))
-        }
+private struct ScrollOffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 

@@ -24,7 +24,7 @@ struct BuildView: View {
                 .padding(.bottom, 40)
             }
             .scrollIndicators(.hidden)
-            .background(AmbientBackdrop(intensity: 0.45))
+            .background(DSH.Palette.canvas)
             .navigationTitle("构建")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
