@@ -65,11 +65,15 @@ open NcnsDSH.xcodeproj     # 选自己的 Team 即可真机调试
 ./build-ipa.sh      # 产出 NcnsDSH-unsigned.ipa + SHA256.txt
 ```
 
-### CI
+### CI：两条线
 
-`.github/workflows/ios.yml` 在 `macos-15` 上构建无签名 IPA 并上传 artifact。
-macOS runner 当前拿不到机器时（job 排队 15 分钟被取消），换 `codemagic.yaml` 里的
-`ncnsdsh-unsigned-ipa`，或任意一台 Mac，详见 [`docs/install.md`](docs/install.md)。
+| workflow | runner | 产物 | 玻璃 |
+|---|---|---|---|
+| `ios.yml` | `macos-15`（Xcode 16.4 / iOS 18.5 SDK） | `NcnsDSH-unsigned.ipa` | 编译期走 `.ultraThinMaterial` 回退 |
+| `ios26.yml` | `macos-26`（Xcode 26.6 / iOS 26.5 SDK） | `NcnsDSH-unsigned-glass.ipa` | 真 Liquid Glass（`.glassEffect`） |
+
+想看到真正的玻璃效果，用 `ios26.yml` 的产物；`ios.yml` 那一条是给旧工具链和 App Store
+审核之外的分发留的退路。两条都在 Actions 页面里手动可跑，push 时只有 `ios.yml` 自动触发。
 
 侧载（AltStore / Sideloadly / TrollStore）后即可安装；免费 Apple ID 签名 7 天有效。
 
