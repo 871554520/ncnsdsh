@@ -6,6 +6,7 @@ struct HomeView: View {
     @EnvironmentObject private var account: AccountStore
     @EnvironmentObject private var local: LocalStore
     @State private var showAccount = false
+    @State private var showConnect = false
 
     @EnvironmentObject private var router: AppRouter
 
@@ -14,13 +15,27 @@ struct HomeView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
                     topBar
-                    if let hero = demo.heroSession {
-                        heroCard(hero)
+
+                    if store.current == nil && local.recent.isEmpty {
+                        onboarding
+                    } else {
+                        if let hero = demo.heroSession, store.current != nil {
+                            heroCard(hero)
+                        } else if let first = local.recent.first {
+                            localHeroCard(first)
+                        }
+
+                        if store.current != nil {
+                            continueShelf
+                        }
+
+                        localShelf
+
+                        if store.current != nil {
+                            workspaceShelf
+                            recentShelf
+                        }
                     }
-                    continueShelf
-                    localShelf
-                    workspaceShelf
-                    recentShelf
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
@@ -39,6 +54,10 @@ struct HomeView: View {
             .sheet(isPresented: $showAccount) {
                 AccountView()
                     .environmentObject(account)
+            }
+            .sheet(isPresented: $showConnect) {
+                ConnectView()
+                    .environmentObject(store)
             }
             .safeAreaInset(edge: .bottom) { dock }
         }
@@ -324,6 +343,113 @@ struct HomeView: View {
         }
     }
 
+    // MARK: - Onboarding
+
+    private var onboarding: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ZStack(alignment: .bottomLeading) {
+                ArtworkView(index: 0, initial: "N", cornerRadius: 26)
+                    .frame(height: 240)
+
+                LinearGradient(
+                    colors: [Color.clear, Color.black.opacity(0.72)],
+                    startPoint: .center,
+                    endPoint: .bottom
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("NcnsDSH")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.7))
+                        .textCase(.uppercase)
+                        .tracking(1.4)
+                    Text("从这儿开始")
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                    Text("不用先登录。本机直接聊，或者连上那台跑 dsh web 的电脑。")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.white.opacity(0.72))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(22)
+            }
+            .frame(height: 240)
+
+            HStack(spacing: 10) {
+                Button(account.isSignedIn ? "新建本机会话" : "登录 DeepSeek") {
+                    Haptics.soft()
+                    if account.isSignedIn {
+                        let id = local.createSession(model: account.selectedModel)
+                        router.path.append(.local(id))
+                    } else {
+                        showAccount = true
+                    }
+                }
+                .buttonStyle(.ncnsProminent)
+
+                Button("连接电脑") {
+                    Haptics.tap()
+                    showConnect = true
+                }
+                .buttonStyle(.ncnsGlass)
+            }
+            .padding(.top, 18)
+        }
+    }
+
+    private func localHeroCard(_ session: LocalSession) -> some View {
+        ZStack(alignment: .bottomLeading) {
+            ArtworkView(index: session.title.count, initial: session.initial, cornerRadius: 26)
+                .frame(height: 300)
+
+            LinearGradient(
+                colors: [Color.clear, Color.black.opacity(0.80)],
+                startPoint: .center,
+                endPoint: .bottom
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 6) {
+                    Image(systemName: "cpu")
+                        .font(.system(size: 11, weight: .semibold))
+                    Text("本机 · \(session.model)")
+                        .font(.system(size: 12, weight: .semibold))
+                }
+                .foregroundStyle(.white.opacity(0.78))
+
+                Text(session.title)
+                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+
+                Text(session.preview)
+                    .font(.system(size: 14))
+                    .foregroundStyle(.white.opacity(0.68))
+                    .lineLimit(2)
+
+                HStack(spacing: 10) {
+                    Button("继续") {
+                        Haptics.soft()
+                        router.path.append(.local(session.id))
+                    }
+                    .buttonStyle(.ncnsProminent)
+
+                    Button("新会话") {
+                        Haptics.soft()
+                        let id = local.createSession(model: account.selectedModel)
+                        router.path.append(.local(id))
+                    }
+                    .buttonStyle(.ncnsGlass)
+                }
+                .padding(.top, 4)
+            }
+            .padding(22)
+        }
+        .frame(height: 300)
+    }
+
     // MARK: - Local
 
     @ViewBuilder
@@ -406,7 +532,7 @@ struct HomeView: View {
 
     @ViewBuilder
     private var dock: some View {
-        if let running = demo.sessions.first(where: { $0.isRunning }) {
+        if store.current != nil, let running = demo.sessions.first(where: { $0.isRunning }) {
             Button {
                 Haptics.soft()
                 router.path.append(.remote(running.id))

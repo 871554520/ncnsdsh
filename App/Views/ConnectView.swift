@@ -3,6 +3,7 @@ import SwiftUI
 struct ConnectView: View {
     @EnvironmentObject private var store: HostStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dismiss) private var dismiss
 
     @State private var address = ""
     @State private var token = ""
@@ -299,6 +300,9 @@ struct ConnectView: View {
     private func connect() {
         focused = nil
         store.connect(address: address, token: token)
+        if store.current != nil {
+            dismiss()
+        }
     }
 
     private func apply(_ code: String) {

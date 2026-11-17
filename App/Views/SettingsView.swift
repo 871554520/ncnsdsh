@@ -9,6 +9,7 @@ struct SettingsView: View {
 
     @State private var showWeb = false
     @State private var showAccount = false
+    @State private var showConnect = false
 
     var body: some View {
         NavigationStack {
@@ -33,6 +34,10 @@ struct SettingsView: View {
         .sheet(isPresented: $showAccount) {
             AccountView()
                 .environmentObject(account)
+        }
+        .sheet(isPresented: $showConnect) {
+            ConnectView()
+                .environmentObject(store)
         }
         .sheet(isPresented: $showWeb) {
             if let host = store.current {
@@ -84,8 +89,9 @@ struct SettingsView: View {
                     .buttonStyle(NcnsGlassButtonStyle(compact: true))
                 }
             } else {
-                Button("连接宿主") {
-                    store.disconnect()
+                Button("连接电脑") {
+                    Haptics.tap()
+                    showConnect = true
                 }
                 .buttonStyle(NcnsGlassButtonStyle(compact: true))
             }

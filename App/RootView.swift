@@ -9,14 +9,8 @@ struct RootView: View {
     @StateObject private var local = LocalStore()
 
     var body: some View {
-        Group {
-            if store.current == nil {
-                ConnectView()
-            } else {
-                MainShell()
-                    .environmentObject(router)
-            }
-        }
+        MainShell()
+            .environmentObject(router)
         .environmentObject(demo)
         .environmentObject(account)
         .environmentObject(local)
