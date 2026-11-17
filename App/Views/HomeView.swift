@@ -133,7 +133,7 @@ struct HomeView: View {
 
     private func heroCard(_ session: ChatSession) -> some View {
         ZStack(alignment: .bottomLeading) {
-            ArtworkView(index: session.artworkIndex, initial: session.initial, cornerRadius: 26)
+            RemoteArtwork(seed: session.id.uuidString, cornerRadius: 26)
                 .frame(height: 320)
 
             SpecularSweep(opacity: 0.14)
@@ -234,7 +234,7 @@ struct HomeView: View {
 
     private func continueCard(_ session: ChatSession) -> some View {
         ZStack(alignment: .bottomLeading) {
-            ArtworkView(index: session.artworkIndex, initial: session.initial, cornerRadius: 20, showsInitial: false)
+            RemoteArtwork(seed: session.id.uuidString, cornerRadius: 20)
 
             LinearGradient(
                 colors: [Color.clear, Color.black.opacity(0.78)],
@@ -275,12 +275,8 @@ struct HomeView: View {
                 LazyHStack(spacing: 12) {
                     ForEach(demo.workspaces) { workspace in
                         VStack(alignment: .leading, spacing: 0) {
-                            ArtworkView(
-                                index: workspace.artworkIndex,
-                                initial: String(workspace.name.prefix(1)),
-                                cornerRadius: 18
-                            )
-                            .frame(width: 160, height: 200)
+                            RemoteArtwork(seed: workspace.id.uuidString, cornerRadius: 18)
+                                .frame(width: 160, height: 200)
 
                             HStack(spacing: 6) {
                                 Text(workspace.name)
@@ -314,13 +310,8 @@ struct HomeView: View {
                 ForEach(Array(demo.sessions.dropFirst(2).prefix(4))) { session in
                     NavigationLink(value: HomeRoute.remote(session.id)) {
                         HStack(spacing: 12) {
-                            ArtworkView(
-                                index: session.artworkIndex,
-                                initial: session.initial,
-                                cornerRadius: 10,
-                                showsInitial: false
-                            )
-                            .frame(width: 46, height: 46)
+                            RemoteArtwork(seed: session.id.uuidString, cornerRadius: 10)
+                                .frame(width: 46, height: 46)
 
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(session.title)

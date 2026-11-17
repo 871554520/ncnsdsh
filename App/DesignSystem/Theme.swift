@@ -4,16 +4,16 @@ import UIKit
 /// NcnsDSH 的视觉基调：近黑影院底 + 靛蓝/薄荷双色强调。
 /// 旧名字（paper/card/muted/markGradient）保留，网页兜底页还在用。
 enum Theme {
-    static let accent = Color(hex: 0x5B8CFF)
-    static let mint = Color(hex: 0x57E0B8)
+    static let accent = Color(hex: 0xFA2D48)
+    static let mint = Color(hex: 0x32D74B)
 
-    static let ink = Color(hex: 0x0B0B0F)
-    static let paper = Color(hex: 0x0B0B0F)
+    static let ink = Color.black
+    static let paper = Color.black
     static let card = Color.white.opacity(0.06)
-    static let raised = Color.white.opacity(0.09)
-    static let hairline = Color.white.opacity(0.10)
-    static let muted = Color.white.opacity(0.56)
-    static let dim = Color.white.opacity(0.34)
+    static let raised = Color.white.opacity(0.10)
+    static let hairline = Color.white.opacity(0.12)
+    static let muted = Color.white.opacity(0.60)
+    static let dim = Color.white.opacity(0.36)
 
     static let markGradient = LinearGradient(
         colors: [accent, Color(hex: 0x8C61FA)],

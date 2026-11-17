@@ -14,7 +14,10 @@ struct WorkspacesView: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 18) {
                     ForEach(demo.workspaces) { workspace in
-                        card(workspace)
+                        NavigationLink(value: workspace.id) {
+                            card(workspace)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -25,17 +28,26 @@ struct WorkspacesView: View {
             .background(Theme.ink.ignoresSafeArea())
             .navigationTitle("工作区")
             .navigationBarTitleDisplayMode(.large)
+            .navigationDestination(for: UUID.self) { id in
+                if let workspace = demo.workspaces.first(where: { $0.id == id }) {
+                    WorkspaceDetailView(workspace: workspace)
+                }
+            }
+            .navigationDestination(for: HomeRoute.self) { route in
+                switch route {
+                case .remote(let id):
+                    ChatView(sessionID: id)
+                case .local(let id):
+                    LocalChatView(sessionID: id)
+                }
+            }
         }
     }
 
     private func card(_ workspace: Workspace) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            ArtworkView(
-                index: workspace.artworkIndex,
-                initial: String(workspace.name.prefix(1)),
-                cornerRadius: 18
-            )
-            .frame(height: 200)
+            RemoteArtwork(seed: workspace.id.uuidString, cornerRadius: 18, showsScrim: true)
+                .frame(height: 200)
 
             HStack(spacing: 6) {
                 Text(workspace.name)
